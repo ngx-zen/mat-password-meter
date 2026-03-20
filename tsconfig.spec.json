@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "types": ["jest", "node"],
     "paths": {
-      "mat-password-meter": ["./src/public-api.ts"]
+      "@ngx-zen/mat-password-meter": ["./src/public-api.ts"]
     }
   },
   "include": ["src/**/*.spec.ts", "setup-jest.ts"]

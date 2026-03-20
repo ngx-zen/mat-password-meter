@@ -4,7 +4,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   testMatch: ['<rootDir>/src/**/*.spec.ts'],
   moduleNameMapper: {
-    '^mat-password-meter$': '<rootDir>/src/public-api.ts',
+    '^@ngx-zen/mat-password-meter$': '<rootDir>/src/public-api.ts',
   },
   transform: {
     '^.+\\.(ts|js|mjs|cjs|html|svg)$': [
