@@ -1,0 +1,45 @@
+{
+  "name": "@ngx-zen/mat-password-meter",
+  "version": "1.0.0",
+  "description": "An Angular Material password strength indicator",
+  "author": "Peter Adison",
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "angular material",
+    "password",
+    "password strength",
+    "password analysis",
+    "component",
+    "zxcvbn"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngx-zen/mat-password-meter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ngx-zen/mat-password-meter/issues"
+  },
+  "homepage": "https://ngx-zen.github.io/mat-password-meter/",
+  "sideEffects": false,
+  "files": [
+    "fesm2022",
+    "strength",
+    "rules",
+    "analysis",
+    "shared",
+    "**/*.d.ts",
+    "**/*.d.ts.map"
+  ],
+  "peerDependencies": {
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/material": "^19.0.0",
+    "zxcvbn": "^4.4.2"
+  },
+  "peerDependenciesMeta": {
+    "zxcvbn": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,58 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: angular19
+    schedule:
+      interval: weekly
+    groups:
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - 'ng-packagr'
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular-devkit/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'ng-packagr'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /
+    target-branch: angular20
+    schedule:
+      interval: weekly
+    groups:
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - 'ng-packagr'
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular-devkit/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'ng-packagr'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /
+    target-branch: angular21
+    schedule:
+      interval: weekly
+    groups:
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - 'ng-packagr'
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular-devkit/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'ng-packagr'
+        update-types: ['version-update:semver-major']

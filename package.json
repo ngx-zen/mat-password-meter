@@ -1,0 +1,63 @@
+{
+  "name": "@ngx-zen/mat-password-meter-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Development workspace for @ngx-zen/mat-password-meter",
+  "author": "Peter Adison",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngx-zen/mat-password-meter.git"
+  },
+  "keywords": [
+    "angular",
+    "angular material",
+    "password",
+    "password strength",
+    "password analysis",
+    "component",
+    "zxcvbn"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "ng-packagr -p src/ng-package.json && node -e \"const fs=require('fs');fs.copyFileSync('README.md','dist/README.md');fs.copyFileSync('LICENSE','dist/LICENSE')\"",
+    "pack": "npm run build && npm pack --pack-destination demo ./dist && node scripts/pack.mjs",
+    "pack:test": "npm run pack && npm install --prefix demo && npm run build --prefix demo",
+    "demo": "npm run pack:test && npx serve demo/dist/demo/browser",
+    "dev": "npm install --prefix demo && npm start --prefix demo -- --configuration source",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@angular/animations": "^19.2.20",
+    "@angular/common": "^19.2.20",
+    "@angular/compiler": "^19.2.20",
+    "@angular/compiler-cli": "^19.2.20",
+    "@angular/core": "^19.2.20",
+    "@angular/forms": "^19.2.20",
+    "@angular/material": "^19.0.0",
+    "@angular/platform-browser": "^19.2.20",
+    "@angular/platform-browser-dynamic": "^19.2.20",
+    "@types/jest": "^30.0.0",
+    "@types/zxcvbn": "^4.4.5",
+    "husky": "^9.1.7",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-preset-angular": "^16.1.1",
+    "lint-staged": "^16.4.0",
+    "ng-packagr": "^19.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.8.3",
+    "zxcvbn": "^4.4.2"
+  },
+  "overrides": {
+    "@tootallnate/once": "3.0.1"
+  },
+  "sideEffects": false,
+  "lint-staged": {
+    "src/**/*.{ts,html,scss,json}": "prettier --check",
+    "demo/src/**/*.{ts,html,scss}": "prettier --check"
+  }
+}

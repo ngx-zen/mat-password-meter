@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["jest", "node"],
+    "paths": {
+      "mat-password-meter": ["./src/public-api.ts"]
+    }
+  },
+  "include": ["src/**/*.spec.ts", "setup-jest.ts"]
+}

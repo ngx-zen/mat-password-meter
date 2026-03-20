@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "paths": {
+      "@ngx-zen/mat-password-meter": ["../../src/public-api.ts"],
+      "@ngx-zen/mat-password-meter/strength": ["../../src/strength/index.ts"],
+      "@ngx-zen/mat-password-meter/rules": ["../../src/rules/index.ts"],
+      "@ngx-zen/mat-password-meter/analysis": ["../../src/analysis/index.ts"]
+    }
+  }
+}

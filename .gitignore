@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+demo/node_modules/
+demo/dist/
+demo/*.tgz
+demo/package-lock.json
+
+# Build
+dist/
+*.tgz
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+.env.local
+
+# Angular
+.angular/

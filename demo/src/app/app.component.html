@@ -1,0 +1,127 @@
+<div class="demo-wrapper">
+  <h2>Password Meter Demo</h2>
+
+  <!-- Mode selector -->
+  <mat-button-toggle-group [(ngModel)]="mode" class="mode-selector">
+    <mat-button-toggle value="strength">Strength</mat-button-toggle>
+    <mat-button-toggle value="rules">Rules</mat-button-toggle>
+    <mat-button-toggle value="analysis">Analysis</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  @switch (mode) {
+    @case ('strength') {
+      <p class="subtitle">
+        Policy + entropy &mdash;
+        <code>mat-password-meter/strength</code>
+      </p>
+    }
+    @case ('rules') {
+      <p class="subtitle">
+        Policy rules &mdash;
+        <code>mat-password-meter/rules</code>
+      </p>
+    }
+    @case ('analysis') {
+      <p class="subtitle">
+        zxcvbn entropy &mdash;
+        <code>mat-password-meter/analysis</code>
+      </p>
+    }
+  }
+
+  <!-- Demo area -->
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Password</mat-label>
+    <input matInput [type]="hide() ? 'password' : 'text'" [(ngModel)]="password" />
+    <button mat-icon-button matSuffix (click)="hide.set(!hide())" [attr.aria-label]="'Toggle visibility'">
+      <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  @switch (mode) {
+    @case ('rules') {
+      <mat-password-rules
+        [password]="password"
+        [hideStrength]="hideStrength()"
+        [feedback]="feedback()"
+        (strengthChange)="onStrengthChange($event)"
+        (isValid)="onIsValid($event)"
+      />
+    }
+    @case ('analysis') {
+      <mat-password-analysis
+        [password]="password"
+        [hideStrength]="hideStrength()"
+        [feedback]="feedback()"
+        [userInputs]="userInputs()"
+        (strengthChange)="onStrengthChange($event)"
+        (isValid)="onIsValid($event)"
+      />
+    }
+    @case ('strength') {
+      <mat-password-strength
+        [password]="password"
+        [hideStrength]="hideStrength()"
+        [feedback]="feedback()"
+        [userInputs]="userInputs()"
+        (strengthChange)="onStrengthChange($event)"
+        (isValid)="onIsValid($event)"
+      />
+    }
+  }
+
+  <!-- Playground options -->
+  <div class="options-panel">
+    <p class="options-panel-title">Playground options</p>
+
+    <div class="options-grid">
+      <!-- Inputs -->
+      <div class="grid-section-label">Inputs</div>
+
+      <span class="option-label"><code>hideStrength</code></span>
+      <mat-button-toggle-group [value]="hideStrength()" (change)="hideStrength.set($event.value)">
+        <mat-button-toggle [value]="false">false</mat-button-toggle>
+        <mat-button-toggle [value]="true">true</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <span class="option-label"><code>feedback</code></span>
+      <mat-button-toggle-group [value]="feedback()" (change)="feedback.set($event.value)">
+        <mat-button-toggle value="hidden">hidden</mat-button-toggle>
+        <mat-button-toggle value="contextual">contextual</mat-button-toggle>
+        <mat-button-toggle value="full">full</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      @if (mode === 'analysis' || mode === 'strength') {
+        <span class="option-label"><code>userInputs</code></span>
+        <div class="user-inputs-row">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>penalize name, email&hellip;</mat-label>
+            <input matInput [(ngModel)]="userInputRaw" (keydown.enter)="addUserInput()" />
+          </mat-form-field>
+          <button mat-stroked-button (click)="addUserInput()">Add</button>
+        </div>
+        @if (userInputs().length) {
+          <div class="chip-list grid-full-span">
+            @for (item of userInputs(); track item) {
+              <mat-chip-row (removed)="removeUserInput(item)">
+                {{ item }}
+                <button matChipRemove><mat-icon>cancel</mat-icon></button>
+              </mat-chip-row>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Outputs -->
+    <div class="options-grid options-grid-outputs">
+      <div class="grid-section-label">Outputs</div>
+
+      <span class="option-label"><code>strengthChange</code></span>
+      <span class="strength-chip" [class]="strengthClass()">{{ currentStrength() }}</span>
+
+      <span class="option-label"><code>isValid</code></span>
+      <span class="validity-badge" [class.valid]="isPasswordValid()">{{ isPasswordValid() }}</span>
+    </div>
+  </div>
+</div>
