@@ -3,6 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@ngx-zen/mat-password-meter?color=crimson&logo=npm)](https://www.npmjs.com/package/@ngx-zen/mat-password-meter)
 [![CI](https://github.com/ngx-zen/mat-password-meter/actions/workflows/ci.yml/badge.svg)](https://github.com/ngx-zen/mat-password-meter/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ngx-zen/mat-password-meter/branch/main/graph/badge.svg)](https://codecov.io/gh/ngx-zen/mat-password-meter)
+[![Known Vulnerabilities](https://snyk.io/test/npm/@ngx-zen/mat-password-meter/badge.svg)](https://snyk.io/test/npm/@ngx-zen/mat-password-meter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Three Angular Material password strength components: rule-based, entropy-based, and a combined full meter, all with a signals-based API.
@@ -15,17 +16,9 @@ Three Angular Material password strength components: rule-based, entropy-based, 
 
 ## Components
 
-| Component | Entry point | What it does |
-|-----------|-------------|--------------|
-| `PasswordStrengthComponent` | `@ngx-zen/mat-password-meter/strength` | Full meter — policy rules **and** entropy, both must be satisfied |
-| `PasswordRulesComponent` | `@ngx-zen/mat-password-meter/rules` | Regex policy checks (length, case, numbers, symbols) |
-| `PasswordAnalysisComponent` | `@ngx-zen/mat-password-meter/analysis` | [zxcvbn](https://github.com/dropbox/zxcvbn) entropy scoring, lazy-loaded |
-
-## Which component should I use?
-
-- **`PasswordStrengthComponent`** — the default, recommended component. Combines rule enforcement and zxcvbn analysis: the bar only reaches 100 when both are simultaneously satisfied.
-- **`PasswordRulesComponent`** — rules only, no zxcvbn bundle cost. You define the policy, users see what they still need to fix.
-- **`PasswordAnalysisComponent`** — zxcvbn entropy only, no policy enforcement. Good for consumer apps where you want to encourage stronger passwords without imposing a specific policy.
+- **`PasswordStrengthComponent`** — the default, recommended component. Combines rule enforcement and zxcvbn entropy; bar tracks rules first, then switches to zxcvbn once rules pass.
+- **`PasswordRulesComponent`** — policy checks only, no zxcvbn bundle cost.
+- **`PasswordAnalysisComponent`** — zxcvbn entropy only, no policy enforcement.
 
 ## Features
 
@@ -50,7 +43,7 @@ Three Angular Material password strength components: rule-based, entropy-based, 
 npm install @ngx-zen/mat-password-meter zxcvbn
 ```
 
-> **Only using `PasswordRulesComponent`?** Skip `zxcvbn` — it has zero dependency on it. `zxcvbn` is only needed when you import from `@ngx-zen/mat-password-meter/strength` or `@ngx-zen/mat-password-meter/analysis`.
+> **Only using `PasswordRulesComponent`?** Skip `zxcvbn` — it's not needed for the rules entry point.
 
 > Requires Angular Material with animations and a theme configured. See the [Angular Material getting started guide](https://material.angular.io/guide/getting-started) if you haven't done this yet.
 
@@ -72,7 +65,7 @@ Add the component to your `imports` array and bind `[password]` to your form con
 
 ### PasswordStrengthComponent — `@ngx-zen/mat-password-meter/strength`
 
-Combines rule enforcement and entropy analysis. The bar only reaches 100 and `isValid` only fires when both checks are simultaneously satisfied.
+Combines rule enforcement and entropy analysis in two phases: the bar tracks rule progress first, then switches to the zxcvbn entropy score once all rules pass. `isValid` only emits `true` when both layers are satisfied.
 
 **Example:**
 ```html
@@ -150,8 +143,8 @@ import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength'
 
 | Output | Type | Description |
 |--------|------|----------|
-| `strengthChange` | `number` | Emits the current 0–100 score on every password change |
-| `isValid` | `boolean` | `true` when both engines simultaneously reach 100 |
+| `strengthChange` | `number` | Emits the current 0–100 display score on every password change (rules phase or zxcvbn phase, depending on current state) |
+| `isValid` | `boolean` | `true` when both rules and zxcvbn are simultaneously satisfied |
 
 ---
 
@@ -214,7 +207,7 @@ readonly analysis = viewChild(PasswordAnalysisComponent);
 
 | Component | Available signals |
 |-----------|-------------------|
-| `PasswordStrengthComponent` | `strength`, `ruleChecks`, `rulesPercent`, `zxcvbnPercent`, `zxcvbnResult`, `mergedHint`, `color`, `strengthLabel` |
+| `PasswordStrengthComponent` | `strength`, `ruleChecks`, `zxcvbnResult`, `mergedHint`, `color`, `strengthLabel` |
 | `PasswordRulesComponent` | `strength`, `ruleChecks`, `contextualHint`, `color`, `strengthLabel` |
 | `PasswordAnalysisComponent` | `strength`, `zxcvbnResult`, `color`, `strengthLabel` |
 
@@ -236,9 +229,9 @@ Exported from the primary entry point:
 import type { PasswordRuleOptions } from '@ngx-zen/mat-password-meter';
 ```
 
-> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`.  
-> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`.  
-> **Utilities:** `evaluateRules`, `scoreFromChecks`.
+> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`  
+> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`  
+> **Utilities:** `evaluateRules`, `scoreFromChecks`
 
 ### `PasswordRuleOptions`
 
@@ -324,7 +317,7 @@ mat-password-strength {
   --pm-rule-pass-color:  light-dark(#2e9244, #66bb6a);  /* passed rule text and success hint */
   --pm-rule-fail-color:  light-dark(#d32f2f, #ef5350);  /* failed rule text */
   --pm-warning-color:    light-dark(#7a6000, #c9a200);  /* warning messages */
-  --pm-secondary-text:   light-dark(#555, #aaa);     /* hints, suggestions, nudge text */
+  --pm-secondary-text:   light-dark(#555, #aaa);        /* hints, suggestions, nudge text */
 }
 ```
 
