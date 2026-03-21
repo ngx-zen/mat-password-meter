@@ -8,11 +8,12 @@ export const METER_STYLES = `
   & .password-meter-label {
     margin-top: 8px;
     margin-bottom: 10px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--mat-sys-title-small-size, 0.875rem);
+    font-weight: var(--mat-sys-title-small-weight, 500);
+    color: var(--mat-sys-on-surface);
   }
   & .mdc-linear-progress__buffer-bar {
-    background-color: var(--pm-buffer-color, #888888);
+    background-color: var(--pm-buffer-color, var(--mat-sys-surface-variant, #888888));
   }
   & .mat-mdc-progress-bar.mat-warn .mdc-linear-progress__bar-inner {
     background-color: var(--pm-weak-color, #ed1c24);
@@ -30,7 +31,7 @@ export const METER_STYLES = `
   & .password-meter-suggestions {
     list-style: none;
     padding: 0;
-    font-size: 0.8rem;
+    font-size: var(--mat-sys-body-small-size, 0.8rem);
   }
   & .password-meter-rules {
     margin: 8px 0 0;
@@ -43,10 +44,10 @@ export const METER_STYLES = `
     margin: 2px 0;
   }
   & .password-meter-rules li.passed {
-    color: var(--pm-strong-color, #258341);
+    color: var(--pm-rule-pass-color, light-dark(#2e9244, #66bb6a));
   }
   & .password-meter-rules li.failed {
-    color: var(--pm-weak-color, #ed1c24);
+    color: var(--pm-rule-fail-color, light-dark(#d32f2f, #ef5350));
   }
   & .password-meter-warning,
   & .password-meter-hint,
@@ -63,17 +64,16 @@ export const METER_STYLES = `
       display: inline-block;
       width: 1.25em;
       line-height: 1;
-      vertical-align: -0.05em;
       text-align: center;
     }
   }
   & .password-meter-warning {
     margin: 8px 0 0;
-    font-size: 0.8rem;
-    color: #7a6000;
+    font-size: var(--mat-sys-body-small-size, 0.8rem);
+    color: var(--pm-warning-color, light-dark(#7a6000, #c9a200));
   }
   & .password-meter-suggestions li {
-    color: #555;
+    color: var(--pm-secondary-text, light-dark(#555, #aaa));
   }
   & .password-meter-panel {
     margin-top: 8px;
@@ -81,16 +81,16 @@ export const METER_STYLES = `
   }
   & .password-meter-hint {
     margin: 8px 0 0;
-    font-size: 0.8rem;
-    color: #555;
+    font-size: var(--mat-sys-body-small-size, 0.8rem);
+    color: var(--pm-secondary-text, light-dark(#555, #aaa));
     &.passed {
-      color: var(--pm-strong-color, #258341);
+      color: var(--pm-rule-pass-color, light-dark(#2e9244, #66bb6a));
     }
   }
   & .password-meter-nudge {
     margin: 8px 0 0;
-    font-size: 0.8rem;
-    color: #999;
+    font-size: var(--mat-sys-body-small-size, 0.8rem);
+    color: var(--pm-secondary-text, light-dark(#555, #aaa));
   }
 }
 `;

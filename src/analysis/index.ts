@@ -1,5 +1,6 @@
 export * from './lib/password-analysis.component';
 export type {
+  ZxcvbnFn,
   ZxcvbnResult,
   ZxcvbnScore,
   FeedbackMode,

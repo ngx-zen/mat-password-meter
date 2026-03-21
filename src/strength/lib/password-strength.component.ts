@@ -14,6 +14,7 @@ import type {
   PasswordMeterMessages,
   PasswordRuleCheck,
   PasswordRuleOptions,
+  ZxcvbnFn,
   ZxcvbnResult,
 } from '@ngx-zen/mat-password-meter';
 import {
@@ -27,7 +28,6 @@ import {
   scoreToLabel,
 } from '@ngx-zen/mat-password-meter';
 
-type ZxcvbnFn = (password: string, userInputs?: string[]) => ZxcvbnResult;
 type MergedHint = { type: 'rule' | 'warning' | 'suggestion' | 'nudge' | 'ok'; text: string };
 
 @Component({

@@ -35,6 +35,8 @@ export interface ZxcvbnResult {
   };
 }
 
+export type ZxcvbnFn = (password: string, userInputs?: string[]) => ZxcvbnResult;
+
 // 'contextual': single inline hint (default) | 'full': progressive panel | 'hidden': nothing
 export type FeedbackMode = 'hidden' | 'contextual' | 'full';
 

@@ -1,4 +1,5 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -32,10 +33,19 @@ type Mode = 'rules' | 'analysis' | 'strength';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  private readonly _document = inject(DOCUMENT);
+
   password = '';
   hide = signal(true);
+  darkMode = signal(false);
   feedback = signal<FeedbackMode>('contextual');
   hideStrength = signal(false);
+
+  toggleDarkMode(): void {
+    const isDark = !this.darkMode();
+    this.darkMode.set(isDark);
+    this._document.documentElement.classList.toggle('dark', isDark);
+  }
 
   readonly currentStrength = signal(0);
   readonly isPasswordValid = signal(false);

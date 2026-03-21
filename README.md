@@ -35,7 +35,7 @@ Three Angular Material password strength components: rule-based, entropy-based, 
 - `feedback` input with three modes: `'contextual'` (single inline hint, default), `'full'` (progressive feedback panel), `'hidden'` (no feedback text)
 - `strengthChange` and `isValid` outputs for straightforward form integration
 - Customizable feedback messages — override defaults or suppress individual messages entirely
-- Fully themeable via CSS custom properties
+- Fully themeable — adapts to light/dark themes via Angular Material design tokens (`--mat-sys-*`), with CSS custom properties for full consumer control
 - [zxcvbn](https://github.com/dropbox/zxcvbn) lazy-loaded on first render — no bundle cost when only using `PasswordRulesComponent`
 
 ## Version compatibility
@@ -236,7 +236,7 @@ Exported from the primary entry point:
 import type { PasswordRuleOptions } from '@ngx-zen/mat-password-meter';
 ```
 
-> All exported types: `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `ZxcvbnScore`, `PasswordMeterMessages`, `StrengthColor`.  
+> All exported types: `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `ZxcvbnScore`, `ZxcvbnFn`, `PasswordMeterMessages`, `StrengthColor`.  
 > All exported constants: `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`.
 
 ### `PasswordRuleOptions`
@@ -295,15 +295,17 @@ import type { PasswordMeterMessages } from '@ngx-zen/mat-password-meter';
 
 ## Color thresholds
 
-| Strength value | Material color | Default |
-|----------------|----------------|---------|
-| 0–20 | `warn` (red) | `#ed1c24` |
-| 21–80 | `accent` (yellow) | `#ffd700` |
-| 81–100 | `primary` (green) | `#258341` |
+| Strength value | Material color | CSS custom property | Default |
+|----------------|----------------|---------------------|---------|
+| 0–20 | `warn` (red) | `--pm-weak-color` | `#ed1c24` |
+| 21–80 | `accent` (yellow) | `--pm-medium-color` | `#ffd700` |
+| 81–100 | `primary` (green) | `--pm-strong-color` | `#258341` |
 
 ---
 
 ## Theming
+
+Components adapt to light/dark themes automatically. Typography and structural colors use Angular Material design tokens (`--mat-sys-*`); semantic text colors use CSS `light-dark()` to provide curated values per color scheme.
 
 Override the default colors with CSS custom properties on the component's host element:
 
@@ -311,10 +313,17 @@ Override the default colors with CSS custom properties on the component's host e
 mat-password-rules,
 mat-password-analysis,
 mat-password-strength {
-  --pm-weak-color:   #e53935;  /* weak bar + failing rule text */
-  --pm-medium-color: #fdd835;  /* medium bar */
-  --pm-strong-color: #43a047;  /* strong bar + passing rule text */
-  --pm-buffer-color: #888888;  /* unfilled bar track */
+  /* Progress bar colors */
+  --pm-weak-color:       #e53935;  /* weak bar (red) */
+  --pm-medium-color:     #fdd835;  /* medium bar (yellow) */
+  --pm-strong-color:     #43a047;  /* strong bar (green) */
+  --pm-buffer-color:     #888888;  /* unfilled bar track */
+
+  /* Text colors */
+  --pm-rule-pass-color:  light-dark(#2e9244, #66bb6a);  /* passed rule text and success hint */
+  --pm-rule-fail-color:  light-dark(#d32f2f, #ef5350);  /* failed rule text */
+  --pm-warning-color:    light-dark(#7a6000, #c9a200);  /* warning messages */
+  --pm-secondary-text:   light-dark(#555, #aaa);     /* hints, suggestions, nudge text */
 }
 ```
 

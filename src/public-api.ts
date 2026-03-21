@@ -4,6 +4,7 @@ export type {
   PasswordRuleCheck,
   ZxcvbnResult,
   ZxcvbnScore,
+  ZxcvbnFn,
   FeedbackMode,
   PasswordMeterMessages,
 } from './shared/types';

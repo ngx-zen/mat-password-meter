@@ -12,6 +12,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import type {
   FeedbackMode,
   PasswordMeterMessages,
+  ZxcvbnFn,
   ZxcvbnResult,
 } from '@ngx-zen/mat-password-meter';
 import {
@@ -21,8 +22,6 @@ import {
   scoreToColor,
   scoreToLabel,
 } from '@ngx-zen/mat-password-meter';
-
-type ZxcvbnFn = (password: string, userInputs?: string[]) => ZxcvbnResult;
 
 @Component({
   selector: 'mat-password-analysis',

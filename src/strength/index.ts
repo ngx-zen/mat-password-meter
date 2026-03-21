@@ -4,6 +4,7 @@ export type {
   PasswordMeterMessages,
   PasswordRuleOptions,
   PasswordRuleCheck,
+  ZxcvbnFn,
   ZxcvbnResult,
   ZxcvbnScore,
 } from '@ngx-zen/mat-password-meter';

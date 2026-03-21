@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-03-21
+
+### Changed
+
+- **Theming** — typography now references Angular Material design tokens (`--mat-sys-title-small-size`, `--mat-sys-body-small-size`, `--mat-sys-title-small-weight`); structural colors reference `--mat-sys-on-surface` and `--mat-sys-surface-variant`; semantic text colors use CSS `light-dark()` for automatic light/dark adaptation
+
+### Added
+
+- **`--pm-rule-pass-color`** — passed rule text and success hint color; split from `--pm-strong-color`; defaults to `light-dark(#2e9244, #66bb6a)`
+- **`--pm-rule-fail-color`** — failed rule text color; split from `--pm-weak-color`; defaults to `light-dark(#d32f2f, #ef5350)`
+- **`--pm-warning-color`** — zxcvbn warning text color; defaults to `light-dark(#7a6000, #c9a200)`
+- **`--pm-secondary-text`** — hint, suggestion, and nudge text color; defaults to `light-dark(#555, #aaa)`
+- **`ZxcvbnFn` type** — exported from the primary entry point and all secondary entry points that use zxcvbn
+
 ## [1.0.0] — 2026-03-21
 
 ### Added
@@ -37,5 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSS custom properties** — `--pm-weak-color`, `--pm-medium-color`, `--pm-strong-color`, `--pm-buffer-color`
 - Live demo: [ngx-zen.github.io/mat-password-meter](https://ngx-zen.github.io/mat-password-meter/)
 
+[1.1.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ngx-zen/mat-password-meter/releases/tag/v1.0.0
 

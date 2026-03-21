@@ -1,22 +1,13 @@
 {
   "name": "@ngx-zen/mat-password-meter-workspace",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Development workspace for @ngx-zen/mat-password-meter",
   "author": "Peter Adison",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ngx-zen/mat-password-meter.git"
   },
-  "keywords": [
-    "angular",
-    "angular material",
-    "password",
-    "password strength",
-    "password analysis",
-    "component",
-    "zxcvbn"
-  ],
   "license": "MIT",
   "scripts": {
     "build": "ng-packagr -p src/ng-package.json && node -e \"const fs=require('fs');fs.copyFileSync('README.md','dist/README.md');fs.copyFileSync('LICENSE','dist/LICENSE')\"",
