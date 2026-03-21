@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { ComponentRef } from '@angular/core';
 import { PasswordStrengthComponent } from './password-strength.component';
 
-// score 4 = 100% from zxcvbn, so rules are always the bottleneck in these tests
+// score 4 = 100% from zxcvbn, so rules drive the strength phase in these tests
 jest.mock('zxcvbn', () => ({
   __esModule: true,
   default: jest.fn((_password: string, _userInputs?: string[]) => ({
@@ -35,13 +35,13 @@ describe('PasswordStrengthComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('bottleneck logic', () => {
+  describe('phased strength logic', () => {
     it('should return 0 when password is empty', () => {
       componentRef.setInput('password', '');
       expect(component.strength()).toBe(0);
     });
 
-    it('should use rulesPercent as the bottleneck when rules are weaker than entropy', fakeAsync(() => {
+    it('should show rulesPercent when rules are not yet satisfied', fakeAsync(() => {
       // zxcvbn mock = score 4 → 100%. 'abc' only satisfies lowercase → 1/5 = 20%.
       componentRef.setInput('password', 'abc');
       componentRef.setInput('options', {
@@ -54,9 +54,9 @@ describe('PasswordStrengthComponent', () => {
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.zxcvbnPercent()).toBe(100);
-      expect(component.rulesPercent()).toBe(20);
-      expect(component.strength()).toBe(20); // min(100, 20)
+      expect((component as any).zxcvbnPercent()).toBe(100);
+      expect((component as any).rulesPercent()).toBe(20);
+      expect(component.strength()).toBe(20); // rules phase: 20%
     }));
 
     it('should reach 100 only when both entropy and all rules are fully satisfied', fakeAsync(() => {
@@ -64,14 +64,12 @@ describe('PasswordStrengthComponent', () => {
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.zxcvbnPercent()).toBe(100);
-      expect(component.rulesPercent()).toBe(100);
+      expect((component as any).zxcvbnPercent()).toBe(100);
+      expect((component as any).rulesPercent()).toBe(100);
       expect(component.strength()).toBe(100);
     }));
 
-    it('should return null from mergedHint when no rules are active and strength is below 100', fakeAsync(() => {
-      // all rules disabled → rulesPercent = 0 → strength = min(100, 0) = 0
-      // zxcvbn mock score 4 (not < 4) and no warning → mergedHint falls through to return null
+    it('should return "Looks great!" from mergedHint when no rules are active and zxcvbn scores 4', fakeAsync(() => {
       componentRef.setInput('password', 'Abcdef1!');
       componentRef.setInput('options', {
         min: 0,
@@ -83,7 +81,7 @@ describe('PasswordStrengthComponent', () => {
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.mergedHint()).toBeNull();
+      expect(component.mergedHint()).toEqual({ type: 'ok', text: 'Looks great!' });
     }));
 
     it('should expose rulesPercent and zxcvbnPercent independently', fakeAsync(() => {
@@ -99,8 +97,8 @@ describe('PasswordStrengthComponent', () => {
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.rulesPercent()).toBe(60);
-      expect(component.zxcvbnPercent()).toBe(100);
+      expect((component as any).rulesPercent()).toBe(60);
+      expect((component as any).zxcvbnPercent()).toBe(100);
       expect(component.strength()).toBe(60);
     }));
   });
@@ -255,9 +253,9 @@ describe('PasswordStrengthComponent', () => {
     });
   });
 
-  describe('strength() bottleneck: rules at 100% vs each zxcvbn score', () => {
+  describe('strength() phased: rules at 100% vs each zxcvbn score', () => {
     // 'Abcdef1!' satisfies all 5 default rules → rulesPercent = 100
-    // strength() = Math.min(zxcvbnPercent, 100) = zxcvbnPercent
+    // strength switches to zxcvbn phase → strength() = zxcvbnPercent
     const zxcvbnMock = jest.requireMock<{ default: jest.Mock }>('zxcvbn').default;
 
     const makeResult = (score: 0 | 1 | 2 | 3 | 4) => ({
@@ -273,47 +271,47 @@ describe('PasswordStrengthComponent', () => {
 
     afterEach(() => zxcvbnMock.mockReturnValue(makeResult(4)));
 
-    it('score 0 — zxcvbn is bottleneck, strength is 0', fakeAsync(() => {
+    it('score 0 — zxcvbn phase, strength is 0', fakeAsync(() => {
       zxcvbnMock.mockReturnValue(makeResult(0));
       componentRef.setInput('password', 'Abcdef1!');
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.rulesPercent()).toBe(100);
-      expect(component.zxcvbnPercent()).toBe(0);
+      expect((component as any).rulesPercent()).toBe(100);
+      expect((component as any).zxcvbnPercent()).toBe(0);
       expect(component.strength()).toBe(0);
     }));
 
-    it('score 1 — zxcvbn is bottleneck, strength is 25', fakeAsync(() => {
+    it('score 1 — zxcvbn phase, strength is 25', fakeAsync(() => {
       zxcvbnMock.mockReturnValue(makeResult(1));
       componentRef.setInput('password', 'Abcdef1!');
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.rulesPercent()).toBe(100);
-      expect(component.zxcvbnPercent()).toBe(25);
+      expect((component as any).rulesPercent()).toBe(100);
+      expect((component as any).zxcvbnPercent()).toBe(25);
       expect(component.strength()).toBe(25);
     }));
 
-    it('score 2 — zxcvbn is bottleneck, strength is 50', fakeAsync(() => {
+    it('score 2 — zxcvbn phase, strength is 50', fakeAsync(() => {
       zxcvbnMock.mockReturnValue(makeResult(2));
       componentRef.setInput('password', 'Abcdef1!');
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.rulesPercent()).toBe(100);
-      expect(component.zxcvbnPercent()).toBe(50);
+      expect((component as any).rulesPercent()).toBe(100);
+      expect((component as any).zxcvbnPercent()).toBe(50);
       expect(component.strength()).toBe(50);
     }));
 
-    it('score 3 — zxcvbn is bottleneck, strength is 75', fakeAsync(() => {
+    it('score 3 — zxcvbn phase, strength is 75', fakeAsync(() => {
       zxcvbnMock.mockReturnValue(makeResult(3));
       componentRef.setInput('password', 'Abcdef1!');
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.rulesPercent()).toBe(100);
-      expect(component.zxcvbnPercent()).toBe(75);
+      expect((component as any).rulesPercent()).toBe(100);
+      expect((component as any).zxcvbnPercent()).toBe(75);
       expect(component.strength()).toBe(75);
     }));
 
@@ -323,8 +321,8 @@ describe('PasswordStrengthComponent', () => {
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(component.rulesPercent()).toBe(100);
-      expect(component.zxcvbnPercent()).toBe(100);
+      expect((component as any).rulesPercent()).toBe(100);
+      expect((component as any).zxcvbnPercent()).toBe(100);
       expect(component.strength()).toBe(100);
     }));
   });
@@ -410,7 +408,7 @@ describe('PasswordStrengthComponent', () => {
       expect((component as any).zxcvbnReady()).toBe(true);
     }));
 
-    it('should return rulesPercent as displayStrength while zxcvbn is loading', () => {
+    it('should return rulesPercent as strength while zxcvbn is loading', () => {
       // Fresh fixture — effect has not run, _zxcvbn is null
       const freshFixture = TestBed.createComponent(PasswordStrengthComponent);
       const freshRef = freshFixture.componentRef;
@@ -420,11 +418,11 @@ describe('PasswordStrengthComponent', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const c = freshComponent as any;
       expect(c.zxcvbnReady()).toBe(false);
-      expect(c.displayStrength()).toBe(freshComponent.rulesPercent());
+      expect(freshComponent.strength()).toBe((freshComponent as any).rulesPercent());
       freshFixture.destroy();
     });
 
-    it('should return strength() as displayStrength once zxcvbn is ready', fakeAsync(() => {
+    it('should return zxcvbnPercent as strength once zxcvbn is ready and rules pass', fakeAsync(() => {
       componentRef.setInput('password', 'Abcdef1!');
       fixture.detectChanges();
       flushMicrotasks();
@@ -432,7 +430,7 @@ describe('PasswordStrengthComponent', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const c = component as any;
       expect(c.zxcvbnReady()).toBe(true);
-      expect(c.displayStrength()).toBe(component.strength());
+      expect(component.strength()).toBe((component as any).zxcvbnPercent());
     }));
   });
 
@@ -564,12 +562,12 @@ describe('PasswordStrengthComponent', () => {
     it('should forward userInputs to zxcvbn', fakeAsync(() => {
       const zxcvbnMock = jest.requireMock<{ default: jest.Mock }>('zxcvbn').default;
       zxcvbnMock.mockClear();
-      componentRef.setInput('password', 'test');
+      componentRef.setInput('password', 'Abcdef1!');
       componentRef.setInput('userInputs', ['john', 'doe']);
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
-      expect(zxcvbnMock).toHaveBeenCalledWith('test', ['john', 'doe']);
+      expect(zxcvbnMock).toHaveBeenCalledWith('Abcdef1!', ['john', 'doe']);
     }));
   });
 });

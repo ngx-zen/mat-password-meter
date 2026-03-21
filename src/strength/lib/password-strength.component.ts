@@ -66,7 +66,7 @@ export class PasswordStrengthComponent {
   });
 
   // zxcvbn score as a 0–100 percentage
-  readonly zxcvbnPercent = computed((): number => {
+  protected readonly zxcvbnPercent = computed((): number => {
     const result = this.zxcvbnResult();
     return result ? ZXCVBN_SCORE_MAP[result.score] : 0;
   });
@@ -75,11 +75,13 @@ export class PasswordStrengthComponent {
     evaluateRules(this.password(), this.resolvedOptions()),
   );
 
-  readonly rulesPercent = computed((): number => scoreFromChecks(this.ruleChecks()));
+  protected readonly rulesPercent = computed((): number => scoreFromChecks(this.ruleChecks()));
+
+  protected readonly allRulesPassed = computed(() => this.ruleChecks().every(r => r.passed));
 
   // full mode: show rules panel until all rules pass, then switch to analysis
   protected readonly fullPanel = computed((): 'rules' | 'analysis' =>
-    this.ruleChecks().every(r => r.passed) ? 'analysis' : 'rules',
+    this.allRulesPassed() ? 'analysis' : 'rules',
   );
 
   // priority order: first failing rule → zxcvbn warning → nudge → ok
@@ -99,21 +101,21 @@ export class PasswordStrengthComponent {
       return { type: 'suggestion', text: result.feedback.suggestions[0] };
     }
     const msgs = this.resolvedMessages();
-    if (this.strength() === 100 && msgs.looksGreat) return { type: 'ok', text: msgs.looksGreat };
+    if (this.allRulesPassed() && this.zxcvbnPercent() === 100 && msgs.looksGreat) {
+      return { type: 'ok', text: msgs.looksGreat };
+    }
     if (result && result.score < 4 && msgs.nudge) return { type: 'nudge', text: msgs.nudge };
     return null;
   });
 
-  // bottleneck: both must reach 100 for the bar to fill
-  readonly strength = computed((): number => Math.min(this.zxcvbnPercent(), this.rulesPercent()));
+  // Phase 1: show rules progress until all pass; Phase 2: show zxcvbn score
+  readonly strength = computed((): number => {
+    if (!this.allRulesPassed()) return this.rulesPercent();
+    return this.zxcvbnReady() ? this.zxcvbnPercent() : this.rulesPercent();
+  });
 
-  // While zxcvbn is loading show rules-only progress; avoids a flash of 0
-  protected readonly displayStrength = computed((): number =>
-    this.zxcvbnReady() ? this.strength() : this.rulesPercent(),
-  );
-
-  readonly color = computed(() => scoreToColor(this.displayStrength()));
-  readonly strengthLabel = computed(() => scoreToLabel(this.displayStrength()));
+  readonly color = computed(() => scoreToColor(this.strength()));
+  readonly strengthLabel = computed(() => scoreToLabel(this.strength()));
 
   constructor() {
     import('zxcvbn')
@@ -133,7 +135,7 @@ export class PasswordStrengthComponent {
     effect(() => {
       const s = this.strength();
       this.strengthChange.emit(s);
-      this.isValid.emit(s === 100);
+      this.isValid.emit(this.allRulesPassed() && this.zxcvbnPercent() === 100);
     });
   }
 }
