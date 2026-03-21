@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@angular/animations": "^19.2.20",
+    "@angular/cli": "^19.2.22",
     "@angular/common": "^19.2.20",
     "@angular/compiler": "^19.2.20",
     "@angular/compiler-cli": "^19.2.20",
@@ -53,7 +54,8 @@
     "zxcvbn": "^4.4.2"
   },
   "overrides": {
-    "@tootallnate/once": "3.0.1"
+    "@tootallnate/once": "3.0.1",
+    "tar": "7.5.12"
   },
   "sideEffects": false,
   "lint-staged": {
