@@ -245,8 +245,10 @@ describe('PasswordRulesComponent', () => {
       });
 
       it('should hide the label again when hideStrength is switched back to true', () => {
+        componentRef.setInput('password', 'Abcdef1!');
         componentRef.setInput('hideStrength', false);
         fixture.detectChanges();
+        expect(fixture.debugElement.query(By.css('.password-meter-label'))).toBeTruthy();
         componentRef.setInput('hideStrength', true);
         fixture.detectChanges();
         expect(fixture.debugElement.query(By.css('.password-meter-label'))).toBeNull();
