@@ -524,4 +524,52 @@ describe('PasswordStrengthComponent', () => {
       }));
     });
   });
+
+  describe('outputs', () => {
+    it('should emit strengthChange with current score when password changes', fakeAsync(() => {
+      const emitted: number[] = [];
+      const sub = component.strengthChange.subscribe(v => emitted.push(v));
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(emitted).toContain(100);
+      sub.unsubscribe();
+    }));
+
+    it('should emit isValid true when strength reaches 100', fakeAsync(() => {
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(validValues).toContain(true);
+      sub.unsubscribe();
+    }));
+
+    it('should emit isValid false when strength is below 100', fakeAsync(() => {
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      componentRef.setInput('password', 'abc');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(validValues).toContain(false);
+      sub.unsubscribe();
+    }));
+  });
+
+  describe('userInputs', () => {
+    it('should forward userInputs to zxcvbn', fakeAsync(() => {
+      const zxcvbnMock = jest.requireMock<{ default: jest.Mock }>('zxcvbn').default;
+      zxcvbnMock.mockClear();
+      componentRef.setInput('password', 'test');
+      componentRef.setInput('userInputs', ['john', 'doe']);
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(zxcvbnMock).toHaveBeenCalledWith('test', ['john', 'doe']);
+    }));
+  });
 });

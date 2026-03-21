@@ -338,4 +338,33 @@ describe('PasswordRulesComponent', () => {
       expect(component.contextualHint()).toBeNull();
     });
   });
+
+  describe('outputs', () => {
+    it('should emit strengthChange with current score when password changes', () => {
+      const emitted: number[] = [];
+      const sub = component.strengthChange.subscribe(v => emitted.push(v));
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      expect(emitted).toContain(100);
+      sub.unsubscribe();
+    });
+
+    it('should emit isValid true when all rules pass', () => {
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      expect(validValues).toContain(true);
+      sub.unsubscribe();
+    });
+
+    it('should emit isValid false when rules are not all satisfied', () => {
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      componentRef.setInput('password', 'abc');
+      fixture.detectChanges();
+      expect(validValues).toContain(false);
+      sub.unsubscribe();
+    });
+  });
 });

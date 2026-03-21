@@ -18,7 +18,6 @@ import type {
   ZxcvbnResult,
 } from '@ngx-zen/mat-password-meter';
 import {
-  computeRulesScore,
   DEFAULT_PASSWORD_METER_MESSAGES,
   DEFAULT_PASSWORD_RULE_OPTIONS,
   evaluateRules,
@@ -26,6 +25,7 @@ import {
   ZXCVBN_SCORE_MAP,
   scoreToColor,
   scoreToLabel,
+  scoreFromChecks,
 } from '@ngx-zen/mat-password-meter';
 
 type MergedHint = { type: 'rule' | 'warning' | 'suggestion' | 'nudge' | 'ok'; text: string };
@@ -71,14 +71,11 @@ export class PasswordStrengthComponent {
     return result ? ZXCVBN_SCORE_MAP[result.score] : 0;
   });
 
-  // how many rules pass, as 0–100
-  readonly rulesPercent = computed((): number =>
-    computeRulesScore(this.password(), this.resolvedOptions()),
-  );
-
   readonly ruleChecks = computed((): PasswordRuleCheck[] =>
     evaluateRules(this.password(), this.resolvedOptions()),
   );
+
+  readonly rulesPercent = computed((): number => scoreFromChecks(this.ruleChecks()));
 
   // full mode: show rules panel until all rules pass, then switch to analysis
   protected readonly fullPanel = computed((): 'rules' | 'analysis' =>
@@ -119,17 +116,19 @@ export class PasswordStrengthComponent {
   readonly strengthLabel = computed(() => scoreToLabel(this.displayStrength()));
 
   constructor() {
-    // load zxcvbn on first use
-    effect(() => {
-      if (!this._zxcvbn()) {
-        import('zxcvbn').then(m => {
-          const mod = m as unknown as { default?: ZxcvbnFn } | ZxcvbnFn;
-          this._zxcvbn.set(
-            (typeof mod === 'function' ? mod : (mod as { default: ZxcvbnFn }).default) as ZxcvbnFn,
-          );
-        });
-      }
-    });
+    import('zxcvbn')
+      .then(m => {
+        const mod = m as unknown as { default?: ZxcvbnFn } | ZxcvbnFn;
+        const resolved = typeof mod === 'function' ? mod : (mod as { default?: ZxcvbnFn }).default;
+        if (typeof resolved === 'function') {
+          this._zxcvbn.set(resolved as ZxcvbnFn);
+        }
+      })
+      .catch(
+        /* istanbul ignore next */ (err: unknown) => {
+          console.error('[mat-password-meter] Failed to load zxcvbn', err);
+        },
+      );
 
     effect(() => {
       const s = this.strength();

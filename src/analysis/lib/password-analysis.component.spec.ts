@@ -408,4 +408,73 @@ describe('PasswordAnalysisComponent', () => {
       }));
     });
   });
+
+  describe('outputs', () => {
+    it('should emit strengthChange with current score when password changes', fakeAsync(() => {
+      const emitted: number[] = [];
+      const sub = component.strengthChange.subscribe(v => emitted.push(v));
+      componentRef.setInput('password', 'some-password');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(emitted).toContain(75);
+      sub.unsubscribe();
+    }));
+
+    it('should emit isValid true when zxcvbn score reaches 4', fakeAsync(() => {
+      const zxcvbnMock = jest.requireMock<{ default: jest.Mock }>('zxcvbn').default;
+      zxcvbnMock.mockReturnValue({
+        score: 4,
+        feedback: { warning: '', suggestions: [] },
+        crack_times_display: {
+          online_throttling_100_per_hour: 'centuries',
+          online_no_throttling_10_per_second: '100 years',
+          offline_slow_hashing_1e4_per_second: '10 years',
+          offline_fast_hashing_1e10_per_second: '1 month',
+        },
+      });
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      componentRef.setInput('password', 'test');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(validValues).toContain(true);
+      sub.unsubscribe();
+      zxcvbnMock.mockReturnValue({
+        score: 3,
+        feedback: { warning: 'Test warning', suggestions: ['Add a word or two.'] },
+        crack_times_display: {
+          online_throttling_100_per_hour: '1 year',
+          online_no_throttling_10_per_second: '1 month',
+          offline_slow_hashing_1e4_per_second: '1 week',
+          offline_fast_hashing_1e10_per_second: '3 hours',
+        },
+      });
+    }));
+
+    it('should emit isValid false when zxcvbn score is below 4', fakeAsync(() => {
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      componentRef.setInput('password', 'some-password');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(validValues).toContain(false);
+      sub.unsubscribe();
+    }));
+  });
+
+  describe('userInputs', () => {
+    it('should forward userInputs to zxcvbn', fakeAsync(() => {
+      const zxcvbnMock = jest.requireMock<{ default: jest.Mock }>('zxcvbn').default;
+      zxcvbnMock.mockClear();
+      componentRef.setInput('password', 'test');
+      componentRef.setInput('userInputs', ['alice', 'bob']);
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(zxcvbnMock).toHaveBeenCalledWith('test', ['alice', 'bob']);
+    }));
+  });
 });

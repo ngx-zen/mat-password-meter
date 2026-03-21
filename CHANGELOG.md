@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] — 2026-03-22
+
+### Fixed
+
+- **zxcvbn load failure** — `import('zxcvbn')` now catches load errors (network, CSP) and logs to console instead of silently failing
+- **zxcvbn module cast** — runtime `typeof` guard replaces unsafe double-cast
+
+### Changed
+
+- **Performance** — eliminated redundant `evaluateRules` call per keystroke; moved zxcvbn import from `effect()` to constructor
+- **Accessibility** — rule list items now include `aria-label` with pass/fail status
+- **Keyframe name** — `pm-panel-in` renamed to `ngx-pm-panel-in` to avoid collisions
+
 ## [1.1.1] — 2026-03-21
 
 ### Fixed
@@ -57,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSS custom properties** — `--pm-weak-color`, `--pm-medium-color`, `--pm-strong-color`, `--pm-buffer-color`
 - Live demo: [ngx-zen.github.io/mat-password-meter](https://ngx-zen.github.io/mat-password-meter/)
 
+[1.1.2]: https://github.com/ngx-zen/mat-password-meter/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/ngx-zen/mat-password-meter/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ngx-zen/mat-password-meter/releases/tag/v1.0.0

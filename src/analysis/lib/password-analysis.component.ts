@@ -74,17 +74,19 @@ export class PasswordAnalysisComponent {
   );
 
   constructor() {
-    // load zxcvbn on first use
-    effect(() => {
-      if (!this._zxcvbn()) {
-        import('zxcvbn').then(m => {
-          const mod = m as unknown as { default?: ZxcvbnFn } | ZxcvbnFn;
-          this._zxcvbn.set(
-            (typeof mod === 'function' ? mod : (mod as { default: ZxcvbnFn }).default) as ZxcvbnFn,
-          );
-        });
-      }
-    });
+    import('zxcvbn')
+      .then(m => {
+        const mod = m as unknown as { default?: ZxcvbnFn } | ZxcvbnFn;
+        const resolved = typeof mod === 'function' ? mod : (mod as { default?: ZxcvbnFn }).default;
+        if (typeof resolved === 'function') {
+          this._zxcvbn.set(resolved as ZxcvbnFn);
+        }
+      })
+      .catch(
+        /* istanbul ignore next */ (err: unknown) => {
+          console.error('[mat-password-meter] Failed to load zxcvbn', err);
+        },
+      );
 
     effect(() => {
       const s = this.strength();

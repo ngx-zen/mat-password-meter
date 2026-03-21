@@ -25,8 +25,7 @@ export function evaluateRules(password: string, opts: PasswordRuleOptions): Pass
   return checks;
 }
 
-export function computeRulesScore(password: string, opts: PasswordRuleOptions): number {
-  const checks = evaluateRules(password, opts);
+export function scoreFromChecks(checks: PasswordRuleCheck[]): number {
   if (checks.length === 0) return 0;
   return Math.floor((checks.filter(c => c.passed).length / checks.length) * 100);
 }

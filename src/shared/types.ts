@@ -42,6 +42,7 @@ export type FeedbackMode = 'hidden' | 'contextual' | 'full';
 
 export type PasswordMeterMessages = Partial<{
   looksGreat: string;
+  /** Ignored by `PasswordRulesComponent`. */
   nudge: string;
 }>;
 

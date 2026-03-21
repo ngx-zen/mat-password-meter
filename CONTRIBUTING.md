@@ -9,7 +9,7 @@ src/
   package.json             # Published package.json (name: mat-password-meter)
   shared/
     types.ts               # PasswordRuleOptions, PasswordRuleCheck, ZxcvbnResult, ZxcvbnScore, ZxcvbnFn, PasswordMeterMessages
-    rules.utils.ts         # evaluateRules(), computeRulesScore()
+    rules.utils.ts         # evaluateRules(), scoreFromChecks()
     meter.utils.ts         # scoreToColor(), scoreToLabel(), ZXCVBN_SCORE_MAP
     meter.styles.ts        # METER_STYLES shared CSS constant
   rules/

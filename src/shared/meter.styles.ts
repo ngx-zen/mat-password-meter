@@ -1,6 +1,6 @@
 /** Shared styles for all mat-password-meter components. */
 export const METER_STYLES = `
-@keyframes pm-panel-in {
+@keyframes ngx-pm-panel-in {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -77,7 +77,7 @@ export const METER_STYLES = `
   }
   & .password-meter-panel {
     margin-top: 8px;
-    animation: pm-panel-in 200ms ease-out;
+    animation: ngx-pm-panel-in 200ms ease-out;
   }
   & .password-meter-hint {
     margin: 8px 0 0;

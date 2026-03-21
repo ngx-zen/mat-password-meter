@@ -96,10 +96,6 @@
     color: var(--mat-sys-on-surface-variant, #999);
     border: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
     min-width: 42px;
-    transition:
-      background-color 0.25s,
-      color 0.25s,
-      border-color 0.25s;
     &.weak {
       background: var(--mat-sys-error-container, #ffebee);
       color: var(--mat-sys-on-error-container, #c62828);

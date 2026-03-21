@@ -1,4 +1,6 @@
-export const ZXCVBN_SCORE_MAP: Record<number, number> = {
+import type { ZxcvbnScore } from './types';
+
+export const ZXCVBN_SCORE_MAP: Record<ZxcvbnScore, number> = {
   0: 0,
   1: 25,
   2: 50,

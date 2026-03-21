@@ -236,8 +236,9 @@ Exported from the primary entry point:
 import type { PasswordRuleOptions } from '@ngx-zen/mat-password-meter';
 ```
 
-> All exported types: `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `ZxcvbnScore`, `ZxcvbnFn`, `PasswordMeterMessages`, `StrengthColor`.  
-> All exported constants: `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`.
+> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`.  
+> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`.  
+> **Utilities:** `evaluateRules`, `scoreFromChecks`.
 
 ### `PasswordRuleOptions`
 

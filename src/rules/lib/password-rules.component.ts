@@ -15,13 +15,13 @@ import type {
   PasswordRuleOptions,
 } from '@ngx-zen/mat-password-meter';
 import {
-  computeRulesScore,
   DEFAULT_PASSWORD_METER_MESSAGES,
   DEFAULT_PASSWORD_RULE_OPTIONS,
   evaluateRules,
   METER_STYLES,
   scoreToColor,
   scoreToLabel,
+  scoreFromChecks,
 } from '@ngx-zen/mat-password-meter';
 
 @Component({
@@ -38,7 +38,6 @@ export class PasswordRulesComponent {
   readonly options = input<PasswordRuleOptions>(DEFAULT_PASSWORD_RULE_OPTIONS);
   readonly hideStrength = input<boolean>(true);
   readonly feedback = input<FeedbackMode>('contextual');
-  /** Override any subset of the display messages. Pass '' for a key to suppress that message. */
   readonly messages = input<PasswordMeterMessages>(DEFAULT_PASSWORD_METER_MESSAGES);
 
   readonly strengthChange = output<number>();
@@ -55,12 +54,14 @@ export class PasswordRulesComponent {
     }),
   );
 
-  readonly strength = computed(() => computeRulesScore(this.password(), this.resolvedOptions()));
-  readonly color = computed(() => scoreToColor(this.strength()));
-  readonly strengthLabel = computed(() => scoreToLabel(this.strength()));
   readonly ruleChecks = computed((): PasswordRuleCheck[] =>
     evaluateRules(this.password(), this.resolvedOptions()),
   );
+
+  readonly strength = computed((): number => scoreFromChecks(this.ruleChecks()));
+
+  readonly color = computed(() => scoreToColor(this.strength()));
+  readonly strengthLabel = computed(() => scoreToLabel(this.strength()));
   readonly contextualHint = computed(
     (): PasswordRuleCheck | null => this.ruleChecks().find(r => !r.passed) ?? null,
   );
