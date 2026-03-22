@@ -6,30 +6,22 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ngx-zen/mat-password-meter/badge.svg)](https://snyk.io/test/npm/@ngx-zen/mat-password-meter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Three Angular Material password strength components: rule-based, entropy-based, and a combined full meter, all with a signals-based API.
-
-**[Live Demo →](https://ngx-zen.github.io/mat-password-meter/)**
+Three Angular Material password strength components with a signals-based API. **[Live Demo →](https://ngx-zen.github.io/mat-password-meter/)**
 
 | Rule-based | Entropy-based |
 |:---:|:---:|
 | ![PasswordRulesComponent preview](docs/preview-rules.png) | ![PasswordAnalysisComponent preview](docs/preview-analysis.png) |
 
-## Components
-
-- **`PasswordStrengthComponent`** — the default, recommended component. Combines rule enforcement and zxcvbn entropy; bar tracks rules first, then switches to zxcvbn once rules pass.
-- **`PasswordRulesComponent`** — policy checks only, no zxcvbn bundle cost.
-- **`PasswordAnalysisComponent`** — zxcvbn entropy only, no policy enforcement.
+- **`PasswordStrengthComponent`** *(recommended)* — combines rule enforcement + zxcvbn entropy in two phases.
+- **`PasswordRulesComponent`** — policy checks only; zxcvbn is never loaded.
+- **`PasswordAnalysisComponent`** — zxcvbn entropy only; no policy enforcement.
 
 ## Features
 
-- Standalone components; no `NgModule` required
-- Fully signals-based API — `input()`, `output()`, `computed()`, `effect()` with `OnPush` change detection
-- Angular Material `<mat-progress-bar>` with color feedback: red → yellow → green
-- `feedback` input with three modes: `'contextual'` (single inline hint, default), `'full'` (progressive feedback panel), `'hidden'` (no feedback text)
-- `strengthChange` and `isValid` outputs for straightforward form integration
-- Customizable feedback messages — override defaults or suppress individual messages entirely
-- Fully themeable — adapts to light/dark themes via Angular Material design tokens (`--mat-sys-*`), with CSS custom properties for full consumer control
-- [zxcvbn](https://github.com/dropbox/zxcvbn) lazy-loaded on first render — no bundle cost when only using `PasswordRulesComponent`
+- Standalone, no `NgModule`; signals-based API (`input()`, `output()`, `computed()`)
+- Three feedback modes: `'contextual'` hint, `'full'` panel, or `'hidden'`
+- zxcvbn lazy-loaded — no bundle cost when using only `PasswordRulesComponent`
+- Fully themeable via CSS custom properties; adapts to light/dark themes automatically
 
 ## Version compatibility
 
@@ -43,306 +35,178 @@ Three Angular Material password strength components: rule-based, entropy-based, 
 npm install @ngx-zen/mat-password-meter zxcvbn
 ```
 
-> **Only using `PasswordRulesComponent`?** Skip `zxcvbn` — it's not needed for the rules entry point.
+> **Only using `PasswordRulesComponent`?** You can skip `zxcvbn` — it's not needed for that entry point.
 
-> Requires Angular Material with animations and a theme configured. See the [Angular Material getting started guide](https://material.angular.io/guide/getting-started) if you haven't done this yet.
+> Requires Angular Material with animations and a theme. See the [Angular Material getting started guide](https://material.angular.io/guide/getting-started).
 
 ---
 
 ## Usage
 
-Import whichever component(s) you need:
-
 ```ts
 import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength';
-import { PasswordRulesComponent } from '@ngx-zen/mat-password-meter/rules';
+import { PasswordRulesComponent }    from '@ngx-zen/mat-password-meter/rules';
 import { PasswordAnalysisComponent } from '@ngx-zen/mat-password-meter/analysis';
 ```
 
-Add the component to your `imports` array and bind `[password]` to your form control value.
+Add to `imports` and bind `[password]` to your form control value:
 
----
-
-### PasswordStrengthComponent — `@ngx-zen/mat-password-meter/strength`
-
-Combines rule enforcement and entropy analysis in two phases: the bar tracks rule progress first, then switches to the zxcvbn entropy score once all rules pass. `isValid` only emits `true` when both layers are satisfied.
-
-**Example:**
 ```html
-<mat-password-strength
-  [password]="password"
-  [options]="{ min: 12 }"
-  [userInputs]="[user.name, user.email]"
-  [hideStrength]="false"
-  (isValid)="submitDisabled = !$event"
-/>
+<!-- PasswordStrengthComponent -->
+<mat-password-strength [password]="password" [options]="{ min: 12 }" (isValid)="submitDisabled = !$event" />
+
+<!-- PasswordRulesComponent -->
+<mat-password-rules [password]="password" [options]="{ min: 12, specialChar: false }" (isValid)="submitDisabled = !$event" />
+
+<!-- PasswordAnalysisComponent -->
+<mat-password-analysis [password]="password" [userInputs]="[user.name, user.email]" (isValid)="submitDisabled = !$event" />
 ```
 
-> `feedback` defaults to `'contextual'`. Set `feedback="full"` for the progressive panel (policy checklist until all rules pass, then zxcvbn analysis), or `feedback="hidden"` to hide all feedback.
-
----
-
-### PasswordRulesComponent — `@ngx-zen/mat-password-meter/rules`
-
-Fast, regex-based policy checks with no extra runtime cost, zxcvbn is never loaded.
-
-**Example:**
-```html
-<mat-password-rules
-  [password]="password"
-  [options]="{ min: 12, specialChar: false }"
-  [hideStrength]="false"
-  (isValid)="submitDisabled = !$event"
-/>
-```
-
-> `feedback` defaults to `'contextual'`. Set `feedback="full"` for the progressive panel (checklist until all rules pass, then "Looks great!"), or `feedback="hidden"` to hide all feedback.
-
----
-
-### PasswordAnalysisComponent — `@ngx-zen/mat-password-meter/analysis`
-
-Delegates to [zxcvbn](https://github.com/dropbox/zxcvbn) for realistic dictionary and pattern analysis. zxcvbn is lazy-loaded on first render.
-
-**Example:**
-```html
-<mat-password-analysis
-  [password]="password"
-  [userInputs]="[user.name, user.email]"
-  [hideStrength]="false"
-  (isValid)="submitDisabled = !$event"
-/>
-```
-
-> `feedback` defaults to `'contextual'`. Set `feedback="full"` to always show the warning and suggestions list, or `feedback="hidden"` to hide all feedback.
+`feedback` defaults to `'contextual'` (single inline hint). Use `feedback="full"` for the progressive panel or `feedback="hidden"` to hide all feedback text.
 
 ---
 
 ## API
 
-### PasswordStrengthComponent
-
-Import from the strength entry point:
-
-```ts
-import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength';
-```
+All three components share the same base inputs and outputs. Differences are noted in the descriptions.
 
 **Inputs**
 
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
-| `password` | `string` | `''` | Password string to evaluate |
-| `options` | `PasswordRuleOptions` | see [PasswordRuleOptions](#passwordruleoptions) | Policy rules to enforce |
+| `password` | `string` | `''` | Password to evaluate |
+| `options` | `PasswordRuleOptions` | see below | Policy rules. Not used by `PasswordAnalysisComponent`. |
 | `hideStrength` | `boolean` | `true` | Show/hide the strength label below the bar |
-| `feedback` | `FeedbackMode` | `'contextual'` | How much feedback to show: `'contextual'` (default), `'full'`, or `'hidden'` |
-| `userInputs` | `string[]` | `[]` | User-specific strings passed to zxcvbn to penalize personal info |
-| `messages` | `PasswordMeterMessages` | `DEFAULT_PASSWORD_METER_MESSAGES` | Override any subset of the display messages; pass `''` for a key to suppress that message entirely |
-
-**Outputs**
-
-| Output | Type | Description |
-|--------|------|----------|
-| `strengthChange` | `number` | Emits the current 0–100 display score on every password change (rules phase or zxcvbn phase, depending on current state) |
-| `isValid` | `boolean` | `true` when both rules and zxcvbn are simultaneously satisfied |
-
----
-
-### PasswordRulesComponent
-
-**Inputs**
-
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `password` | `string` | `''` | Password string to evaluate |
-| `options` | `PasswordRuleOptions` | see [PasswordRuleOptions](#passwordruleoptions) | Policy rules to enforce |
-| `hideStrength` | `boolean` | `true` | Show/hide the strength label below the bar |
-| `feedback` | `FeedbackMode` | `'contextual'` | How much feedback to show: `'contextual'` (default), `'full'`, or `'hidden'` |
-| `messages` | `PasswordMeterMessages` | `DEFAULT_PASSWORD_METER_MESSAGES` | Override any subset of the display messages; pass `''` for a key to suppress that message entirely |
-
-**Outputs**
-
-| Output | Type | Description |
-|--------|------|--------------|
-| `strengthChange` | `number` | Emits the current 0–100 score on every password change |
-| `isValid` | `boolean` | `true` when all rules pass (strength reaches 100) |
-
----
-
-### PasswordAnalysisComponent
-
-**Inputs**
-
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `password` | `string` | `''` | Password string to evaluate |
-| `hideStrength` | `boolean` | `true` | Show/hide the strength label below the bar |
-| `feedback` | `FeedbackMode` | `'contextual'` | How much feedback to show: `'contextual'` (default), `'full'`, or `'hidden'` |
-| `userInputs` | `string[]` | `[]` | User-specific strings passed to zxcvbn to penalize personal info |
-| `messages` | `PasswordMeterMessages` | `DEFAULT_PASSWORD_METER_MESSAGES` | Override any subset of the display messages; pass `''` for a key to suppress that message entirely |
+| `feedback` | `FeedbackMode` | `'contextual'` | `'contextual'`, `'full'`, or `'hidden'` |
+| `userInputs` | `string[]` | `[]` | Strings passed to zxcvbn to penalize personal info. Not used by `PasswordRulesComponent`. |
+| `messages` | `PasswordMeterMessages` | see below | Override any subset of display strings |
 
 **Outputs**
 
 | Output | Type | Description |
 |--------|------|-------------|
-| `strengthChange` | `number` | Emits the current 0–100 score on every password change |
-| `isValid` | `boolean` | `true` when zxcvbn score reaches 4 (strength 100) |
-
----
-
-## Advanced: direct signal access
-
-The following computed signals are `public readonly` and accessible via `viewChild`.
-
-```ts
-import { viewChild } from '@angular/core';
-import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength';
-import { PasswordRulesComponent } from '@ngx-zen/mat-password-meter/rules';
-import { PasswordAnalysisComponent } from '@ngx-zen/mat-password-meter/analysis';
-
-readonly meter    = viewChild(PasswordStrengthComponent);
-readonly rules    = viewChild(PasswordRulesComponent);
-readonly analysis = viewChild(PasswordAnalysisComponent);
-```
-
-| Component | Available signals |
-|-----------|-------------------|
-| `PasswordStrengthComponent` | `strength`, `ruleChecks`, `zxcvbnResult`, `mergedHint`, `color`, `strengthLabel` |
-| `PasswordRulesComponent` | `strength`, `ruleChecks`, `contextualHint`, `color`, `strengthLabel` |
-| `PasswordAnalysisComponent` | `strength`, `zxcvbnResult`, `color`, `strengthLabel` |
-
-**Example:**
-
-```ts
-protected readonly isValid   = computed(() => this.meter()?.strength() === 100);
-protected readonly firstFail = computed(() => this.meter()?.ruleChecks().find(r => !r.passed)?.label);
-```
-
+| `strengthChange` | `number` | Current 0–100 score on every password change |
+| `isValid` | `boolean` | `true` when fully satisfied (both rules + zxcvbn for `PasswordStrengthComponent`) |
 
 ---
 
 ## Shared types
 
-Exported from the primary entry point:
-
 ```ts
-import type { PasswordRuleOptions } from '@ngx-zen/mat-password-meter';
+import type { PasswordRuleOptions, PasswordMeterMessages } from '@ngx-zen/mat-password-meter';
 ```
 
-> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`  
+> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`, `PasswordStrengthLabels`, `PasswordRuleLabels`  
 > **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`  
 > **Utilities:** `evaluateRules`, `scoreFromChecks`
 
 ### `PasswordRuleOptions`
 
-All properties are optional — pass only the rules you want to change; omitted keys fall back to `DEFAULT_PASSWORD_RULE_OPTIONS`. To disable a rule that is on by default, pass it explicitly as `false` (e.g. `{ specialChar: false }`).
+All properties optional; omitted keys fall back to defaults. Pass `false` to disable a rule (e.g. `{ specialChar: false }`).
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `min` | `number` | `8` | Minimum password length |
-| `lowercase` | `boolean` | `true` | Require at least one lowercase letter |
-| `uppercase` | `boolean` | `true` | Require at least one uppercase letter |
-| `number` | `boolean` | `true` | Require at least one digit |
-| `specialChar` | `boolean` | `true` | Require at least one special character |
+| Property | Type | Default |
+|----------|------|---------|
+| `min` | `number` | `8` |
+| `lowercase` | `boolean` | `true` |
+| `uppercase` | `boolean` | `true` |
+| `number` | `boolean` | `true` |
+| `specialChar` | `boolean` | `true` |
 
 ### `PasswordMeterMessages`
 
-Used by `PasswordStrengthComponent` and `PasswordAnalysisComponent`. `PasswordRulesComponent` only uses `looksGreat`. `PasswordMeterMessages` is itself a partial type — pass only the keys you want to override; omitted keys fall back to `DEFAULT_PASSWORD_METER_MESSAGES`. Pass `''` to suppress a message entirely.
+All properties optional; omitted keys fall back to defaults. For string keys, pass `''` to suppress that message entirely. Not all keys apply to every component.
 
-```ts
-import type { PasswordMeterMessages } from '@ngx-zen/mat-password-meter';
-```
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `looksGreat` | `string` | `'Looks great!'` | Shown when strength is perfect |
+| `nudge` | `string` | `'Make it harder to guess.'` | Shown when zxcvbn score < 4 with no warning or suggestions. Ignored by `PasswordRulesComponent`. |
+| `strengthLabels` | `PasswordStrengthLabels` | `{}` | Override the strength level labels below the bar |
+| `ruleLabels` | `PasswordRuleLabels` | `{}` | Override the per-rule checklist labels. Ignored by `PasswordAnalysisComponent`. |
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `looksGreat` | `'Looks great!'` | Shown when strength is perfect (score 4, all rules pass) |
-| `nudge` | `'Make it harder to guess.'` | Shown when rules pass but zxcvbn score is below 4 with no warning or suggestions |
-
-**Example — custom wording:**
+**Example:**
 ```html
 <mat-password-strength
   [password]="password"
-  [messages]="{ looksGreat: 'Perfect!', nudge: 'Add more variety.' }"
+  [messages]="{
+    looksGreat: 'Perpekto!',
+    nudge: '',
+    strengthLabels: { veryWeak: 'Napakahina', veryStrong: 'Napakalakas' },
+    ruleLabels: { minLength: (n) => \`Kailangan ng ${n} titik\` }
+  }"
 />
 ```
 
-**Example — suppress the nudge entirely:**
-```html
-<mat-password-analysis
-  [password]="password"
-  [messages]="{ nudge: '' }"
-/>
-```
+### `PasswordStrengthLabels`
+
+Keys: `veryWeak` · `weak` · `fair` · `good` · `strong` · `veryStrong`  
+Defaults: `'Very Weak'` · `'Weak'` · `'Fair'` · `'Good'` · `'Strong'` · `'Very Strong'`
+
+### `PasswordRuleLabels`
+
+| Key | Default |
+|-----|---------|
+| `minLength` | `` `At least ${n} characters` `` (also accepts `(n: number) => string`) |
+| `lowercase` | `'At least 1 lowercase letter'` |
+| `uppercase` | `'At least 1 uppercase letter'` |
+| `number` | `'At least 1 number'` |
+| `specialChar` | `'At least 1 special character'` |
+
+> **Need translated zxcvbn feedback strings?** The `warning` and `suggestions` shown by `PasswordAnalysisComponent` and `PasswordStrengthComponent` come directly from zxcvbn and are always English. [Open an issue](https://github.com/ngx-zen/mat-password-meter/issues) if you need `@zxcvbn-ts` support.
 
 ---
 
-## Strength labels
+## Direct signal access
 
-| Strength value | Label |
-|----------------|-------|
-| 0 | Very Weak |
-| 1–25 | Weak |
-| 26–50 | Fair |
-| 51–75 | Good |
-| 76–99 | Strong |
-| 100 | Very Strong |
+Public computed signals accessible via `viewChild`:
 
-## Color thresholds
+| Component | Signals |
+|-----------|---------|
+| `PasswordStrengthComponent` | `strength`, `ruleChecks`, `zxcvbnResult`, `mergedHint`, `color`, `strengthLabel` |
+| `PasswordRulesComponent` | `strength`, `ruleChecks`, `contextualHint`, `color`, `strengthLabel` |
+| `PasswordAnalysisComponent` | `strength`, `zxcvbnResult`, `color`, `strengthLabel` |
 
-| Strength value | Material color | CSS custom property | Default |
-|----------------|----------------|---------------------|---------|
-| 0–20 | `warn` (red) | `--pm-weak-color` | `#ed1c24` |
-| 21–80 | `accent` (yellow) | `--pm-medium-color` | `#ffd700` |
-| 81–100 | `primary` (green) | `--pm-strong-color` | `#258341` |
+```ts
+readonly meter = viewChild(PasswordStrengthComponent);
+
+protected readonly isValid   = computed(() => this.meter()?.strength() === 100);
+protected readonly firstFail = computed(() => this.meter()?.ruleChecks().find(r => !r.passed)?.label);
+```
 
 ---
 
 ## Theming
 
-Components adapt to light/dark themes automatically. Typography and structural colors use Angular Material design tokens (`--mat-sys-*`); semantic text colors use CSS `light-dark()` to provide curated values per color scheme.
+Components adapt to light/dark themes via Angular Material design tokens (`--mat-sys-*`). Override colors via CSS custom properties:
 
-Override the default colors with CSS custom properties on the component's host element:
+<details>
+<summary>Available CSS custom properties</summary>
 
 ```css
 mat-password-rules,
 mat-password-analysis,
 mat-password-strength {
   /* Progress bar colors */
-  --pm-weak-color:       #e53935;  /* weak bar (red) */
-  --pm-medium-color:     #fdd835;  /* medium bar (yellow) */
-  --pm-strong-color:     #43a047;  /* strong bar (green) */
-  --pm-buffer-color:     #888888;  /* unfilled bar track */
+  --pm-weak-color:      #e53935;
+  --pm-medium-color:    #fdd835;
+  --pm-strong-color:    #43a047;
+  --pm-buffer-color:    #888888;
 
   /* Text colors */
-  --pm-rule-pass-color:  light-dark(#2e9244, #66bb6a);  /* passed rule text and success hint */
-  --pm-rule-fail-color:  light-dark(#d32f2f, #ef5350);  /* failed rule text */
-  --pm-warning-color:    light-dark(#7a6000, #c9a200);  /* warning messages */
-  --pm-secondary-text:   light-dark(#555, #aaa);        /* hints, suggestions, nudge text */
+  --pm-rule-pass-color: light-dark(#2e9244, #66bb6a);
+  --pm-rule-fail-color: light-dark(#d32f2f, #ef5350);
+  --pm-warning-color:   light-dark(#7a6000, #c9a200);
+  --pm-secondary-text:  light-dark(#555, #aaa);
 }
 ```
 
-Scope overrides to a specific instance:
+</details>
 
-```css
-.my-signup-form mat-password-rules {
-  --pm-strong-color: #1565c0;
-}
-```
+---
 
 ## Acknowledgments
 
-This library was inspired by
-[`angular-material-extensions/password-strength`](https://github.com/angular-material-extensions/password-strength).
-Thank you to its authors for the original concept.
+Inspired by [`angular-material-extensions/password-strength`](https://github.com/angular-material-extensions/password-strength).
 
-## Contributing
+## Contributing · Changelog · License
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for local development setup, building, testing, running the demo, and code style.
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for release history.
-
-## License
-
-MIT — see [LICENSE](LICENSE) for details.
+[CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) · [MIT](LICENSE)
