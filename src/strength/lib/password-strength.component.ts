@@ -72,7 +72,7 @@ export class PasswordStrengthComponent {
   });
 
   readonly ruleChecks = computed((): PasswordRuleCheck[] =>
-    evaluateRules(this.password(), this.resolvedOptions()),
+    evaluateRules(this.password(), this.resolvedOptions(), this.resolvedMessages().ruleLabels),
   );
 
   protected readonly rulesPercent = computed((): number => scoreFromChecks(this.ruleChecks()));
@@ -115,7 +115,9 @@ export class PasswordStrengthComponent {
   });
 
   readonly color = computed(() => scoreToColor(this.strength()));
-  readonly strengthLabel = computed(() => scoreToLabel(this.strength()));
+  readonly strengthLabel = computed(() =>
+    scoreToLabel(this.strength(), this.resolvedMessages().strengthLabels),
+  );
 
   constructor() {
     import('zxcvbn')

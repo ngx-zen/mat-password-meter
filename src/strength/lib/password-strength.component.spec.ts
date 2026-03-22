@@ -521,6 +521,26 @@ describe('PasswordStrengthComponent', () => {
         expect(fixture.debugElement.query(By.css('.password-meter-hint.passed'))).toBeNull();
       }));
     });
+
+    it('should use custom strengthLabels when provided', fakeAsync(() => {
+      zxcvbnMock.mockReturnValue(makeResult(4));
+      componentRef.setInput('password', 'Abcdef1!');
+      componentRef.setInput('hideStrength', false);
+      componentRef.setInput('messages', { strengthLabels: { veryStrong: 'Napakalakas' } });
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.strengthLabel()).toBe('Napakalakas');
+    }));
+
+    it('should use custom ruleLabels when provided', () => {
+      componentRef.setInput('password', '');
+      componentRef.setInput('messages', {
+        ruleLabels: { minLength: (n: number) => `Kailangan ng ${n} titik` },
+      });
+      fixture.detectChanges();
+      expect(component.ruleChecks()[0].label).toBe('Kailangan ng 8 titik');
+    });
   });
 
   describe('outputs', () => {

@@ -55,13 +55,15 @@ export class PasswordRulesComponent {
   );
 
   readonly ruleChecks = computed((): PasswordRuleCheck[] =>
-    evaluateRules(this.password(), this.resolvedOptions()),
+    evaluateRules(this.password(), this.resolvedOptions(), this.resolvedMessages().ruleLabels),
   );
 
   readonly strength = computed((): number => scoreFromChecks(this.ruleChecks()));
 
   readonly color = computed(() => scoreToColor(this.strength()));
-  readonly strengthLabel = computed(() => scoreToLabel(this.strength()));
+  readonly strengthLabel = computed(() =>
+    scoreToLabel(this.strength(), this.resolvedMessages().strengthLabels),
+  );
   readonly contextualHint = computed(
     (): PasswordRuleCheck | null => this.ruleChecks().find(r => !r.passed) ?? null,
   );

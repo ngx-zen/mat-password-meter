@@ -321,6 +321,34 @@ describe('PasswordRulesComponent', () => {
         fixture.detectChanges();
         expect(fixture.debugElement.query(By.css('.password-meter-hint.passed'))).toBeNull();
       });
+
+      it('should use custom strengthLabels when provided', () => {
+        componentRef.setInput('password', 'Abcdef1!');
+        componentRef.setInput('messages', { strengthLabels: { veryStrong: 'Napakalakas' } });
+        expect(component.strengthLabel()).toBe('Napakalakas');
+      });
+
+      it('should fall back to default strength labels for absent keys', () => {
+        componentRef.setInput('password', '');
+        componentRef.setInput('messages', { strengthLabels: { veryStrong: 'Napakalakas' } });
+        expect(component.strengthLabel()).toBe('Very Weak');
+      });
+
+      it('should use custom ruleLabels (static) when provided', () => {
+        componentRef.setInput('password', 'abc');
+        componentRef.setInput('messages', { ruleLabels: { minLength: 'Kailangan ng 8 titik' } });
+        const minCheck = component.ruleChecks().find(r => r.label === 'Kailangan ng 8 titik');
+        expect(minCheck).toBeTruthy();
+      });
+
+      it('should use custom ruleLabels (function) for minLength', () => {
+        componentRef.setInput('password', 'abc');
+        componentRef.setInput('messages', {
+          ruleLabels: { minLength: (n: number) => `Min. ${n} chars` },
+        });
+        const minCheck = component.ruleChecks().find(r => r.label === 'Min. 8 chars');
+        expect(minCheck).toBeTruthy();
+      });
     });
   });
 
