@@ -75,6 +75,18 @@ export const METER_STYLES = `
   & .password-meter-suggestions li {
     color: var(--pm-secondary-text, light-dark(#555, #aaa));
   }
+  & .password-meter-feedback {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 150ms ease-out;
+    & > div {
+      overflow: hidden;
+      min-height: 0;
+    }
+    &.active {
+      grid-template-rows: 1fr;
+    }
+  }
   & .password-meter-panel {
     margin-top: 8px;
     animation: ngx-pm-panel-in 200ms ease-out;
