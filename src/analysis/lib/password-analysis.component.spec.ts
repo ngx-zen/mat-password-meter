@@ -407,6 +407,17 @@ describe('PasswordAnalysisComponent', () => {
         expect(fixture.debugElement.query(By.css('.password-meter-hint.passed'))).toBeNull();
       }));
     });
+
+    it('should use custom strengthLabels when provided', fakeAsync(() => {
+      zxcvbnMock.mockReturnValue(makeResult(3));
+      componentRef.setInput('password', 'test');
+      componentRef.setInput('hideStrength', false);
+      componentRef.setInput('messages', { strengthLabels: { good: 'Magaling' } });
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.strengthLabel()).toBe('Magaling');
+    }));
   });
 
   describe('outputs', () => {

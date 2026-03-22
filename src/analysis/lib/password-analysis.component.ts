@@ -59,7 +59,9 @@ export class PasswordAnalysisComponent {
   });
 
   readonly color = computed(() => scoreToColor(this.strength()));
-  readonly strengthLabel = computed(() => scoreToLabel(this.strength()));
+  readonly strengthLabel = computed(() =>
+    scoreToLabel(this.strength(), this.resolvedMessages().strengthLabels),
+  );
 
   protected readonly resolvedMessages = computed(
     (): Required<PasswordMeterMessages> => ({

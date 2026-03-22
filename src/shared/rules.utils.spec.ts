@@ -57,4 +57,57 @@ describe('rules.utils', () => {
       expect(evaluateRules('abc!', { specialChar: true })[0].passed).toBe(true);
     });
   });
+
+  describe('custom labels', () => {
+    it('should use a static minLength override', () => {
+      const [check] = evaluateRules('hi', { min: 8 }, { minLength: 'Kailangan ng 8 titik' });
+      expect(check.label).toBe('Kailangan ng 8 titik');
+    });
+
+    it('should use a function minLength override', () => {
+      const [check] = evaluateRules(
+        'hi',
+        { min: 8 },
+        { minLength: n => `Kailangan ng ${n} titik` },
+      );
+      expect(check.label).toBe('Kailangan ng 8 titik');
+    });
+
+    it('should use lowercase label override', () => {
+      const [check] = evaluateRules(
+        'ABC',
+        { lowercase: true },
+        { lowercase: 'Kailangan ng 1 maliit na letra' },
+      );
+      expect(check.label).toBe('Kailangan ng 1 maliit na letra');
+    });
+
+    it('should use uppercase label override', () => {
+      const [check] = evaluateRules(
+        'abc',
+        { uppercase: true },
+        { uppercase: 'Kailangan ng 1 malaking letra' },
+      );
+      expect(check.label).toBe('Kailangan ng 1 malaking letra');
+    });
+
+    it('should use number label override', () => {
+      const [check] = evaluateRules('abc', { number: true }, { number: 'Kailangan ng 1 numero' });
+      expect(check.label).toBe('Kailangan ng 1 numero');
+    });
+
+    it('should use specialChar label override', () => {
+      const [check] = evaluateRules(
+        'abc',
+        { specialChar: true },
+        { specialChar: 'Kailangan ng 1 espesyal na titik' },
+      );
+      expect(check.label).toBe('Kailangan ng 1 espesyal na titik');
+    });
+
+    it('should fall back to default labels when labels object is empty', () => {
+      const [check] = evaluateRules('hi', { min: 5 }, {});
+      expect(check.label).toBe('At least 5 characters');
+    });
+  });
 });

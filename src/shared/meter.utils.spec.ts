@@ -30,5 +30,33 @@ describe('meter.utils', () => {
     it('should return "Strong" for 76', () => expect(scoreToLabel(76)).toBe('Strong'));
     it('should return "Strong" for 99', () => expect(scoreToLabel(99)).toBe('Strong'));
     it('should return "Very Strong" for 100', () => expect(scoreToLabel(100)).toBe('Very Strong'));
+
+    describe('with custom labels', () => {
+      const labels = {
+        veryWeak: 'Napakahina',
+        weak: 'Mahina',
+        fair: 'Katamtaman',
+        good: 'Magaling',
+        strong: 'Malakas',
+        veryStrong: 'Napakalakas',
+      };
+
+      it('should use veryWeak override for 0', () =>
+        expect(scoreToLabel(0, labels)).toBe('Napakahina'));
+      it('should use weak override for 25', () => expect(scoreToLabel(25, labels)).toBe('Mahina'));
+      it('should use fair override for 50', () =>
+        expect(scoreToLabel(50, labels)).toBe('Katamtaman'));
+      it('should use good override for 75', () =>
+        expect(scoreToLabel(75, labels)).toBe('Magaling'));
+      it('should use strong override for 99', () =>
+        expect(scoreToLabel(99, labels)).toBe('Malakas'));
+      it('should use veryStrong override for 100', () =>
+        expect(scoreToLabel(100, labels)).toBe('Napakalakas'));
+
+      it('should fall back to defaults for absent keys', () => {
+        expect(scoreToLabel(0, {})).toBe('Very Weak');
+        expect(scoreToLabel(100, {})).toBe('Very Strong');
+      });
+    });
   });
 });

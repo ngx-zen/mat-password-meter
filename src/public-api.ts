@@ -7,6 +7,8 @@ export type {
   ZxcvbnFn,
   FeedbackMode,
   PasswordMeterMessages,
+  PasswordStrengthLabels,
+  PasswordRuleLabels,
 } from './shared/types';
 export { DEFAULT_PASSWORD_RULE_OPTIONS, DEFAULT_PASSWORD_METER_MESSAGES } from './shared/types';
 export { evaluateRules, scoreFromChecks } from './shared/rules.utils';

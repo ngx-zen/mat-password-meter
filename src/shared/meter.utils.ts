@@ -1,4 +1,4 @@
-import type { ZxcvbnScore } from './types';
+import type { PasswordStrengthLabels, ZxcvbnScore } from './types';
 
 export const ZXCVBN_SCORE_MAP: Record<ZxcvbnScore, number> = {
   0: 0,
@@ -20,11 +20,11 @@ export function scoreToColor(value: number): StrengthColor {
   return 'primary';
 }
 
-export function scoreToLabel(value: number): string {
-  if (value === 0) return 'Very Weak';
-  if (value <= 25) return 'Weak';
-  if (value <= 50) return 'Fair';
-  if (value <= 75) return 'Good';
-  if (value < 100) return 'Strong';
-  return 'Very Strong';
+export function scoreToLabel(value: number, labels?: PasswordStrengthLabels): string {
+  if (value === 0) return labels?.veryWeak ?? 'Very Weak';
+  if (value <= 25) return labels?.weak ?? 'Weak';
+  if (value <= 50) return labels?.fair ?? 'Fair';
+  if (value <= 75) return labels?.good ?? 'Good';
+  if (value < 100) return labels?.strong ?? 'Strong';
+  return labels?.veryStrong ?? 'Very Strong';
 }
