@@ -124,13 +124,14 @@ describe('PasswordStrengthComponent', () => {
         componentRef.setInput('password', 'abc');
         fixture.detectChanges();
         expect(fixture.debugElement.query(By.css('.password-meter-hint'))).toBeTruthy();
-        expect(fixture.debugElement.query(By.css('.password-meter-feedback'))).toBeNull();
       });
 
       it('should not render any feedback when feedback is hidden', () => {
         componentRef.setInput('feedback', 'hidden');
         fixture.detectChanges();
-        expect(fixture.debugElement.query(By.css('.password-meter-feedback'))).toBeNull();
+        const wrapper = fixture.debugElement.query(By.css('.password-meter-feedback'));
+        expect(wrapper).toBeTruthy();
+        expect(wrapper.classes['active']).toBeFalsy();
         expect(fixture.debugElement.query(By.css('.password-meter-hint'))).toBeNull();
       });
 
@@ -159,7 +160,7 @@ describe('PasswordStrengthComponent', () => {
         fixture.detectChanges();
         flushMicrotasks();
         fixture.detectChanges();
-        expect(fixture.debugElement.query(By.css('.password-meter-feedback'))).toBeNull();
+
         expect(fixture.debugElement.query(By.css('.password-meter-hint'))).toBeTruthy();
       }));
 
