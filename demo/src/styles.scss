@@ -36,10 +36,3 @@ body {
     background: #121212;
   }
 }
-
-/* Prevent iOS Safari auto-zoom on input focus */
-@supports (-webkit-touch-callout: none) {
-  input[matInput] {
-    font-size: 16px;
-  }
-}
