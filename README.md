@@ -12,7 +12,7 @@ Three Angular Material password strength components with a signals-based API. **
 |:---:|:---:|
 | ![PasswordRulesComponent preview](docs/preview-rules.png) | ![PasswordAnalysisComponent preview](docs/preview-analysis.png) |
 
-- **`PasswordStrengthComponent`** *(recommended)* — combines rule enforcement + [zxcvbn](https://github.com/dropbox/zxcvbn) entropy in two phases.
+- **`PasswordStrengthComponent`** — combines rule enforcement + [zxcvbn](https://github.com/dropbox/zxcvbn) entropy in two phases.
 - **`PasswordRulesComponent`** — policy checks only; zxcvbn is never loaded.
 - **`PasswordAnalysisComponent`** — zxcvbn entropy only; no policy enforcement.
 
