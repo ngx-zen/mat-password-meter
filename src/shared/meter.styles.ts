@@ -82,8 +82,12 @@ export const METER_STYLES = `
     & > div {
       overflow: hidden;
       min-height: 0;
+      visibility: hidden;
     }
     &.active {
+      & > div {
+        visibility: visible;
+      }
       grid-template-rows: 1fr;
     }
   }
