@@ -4,14 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'npm dist-tag'
+        description: 'npm dist-tag (latest=current, v1-lts=angular19, v2-lts=angular20, v3-lts=angular21)'
         required: false
-        default: 'latest'
+        default: 'v1-lts'
         type: choice
         options:
-          - latest
           - v1-lts
-          - v2-lts
 
 permissions:
   id-token: write # Required for OIDC
@@ -30,6 +28,7 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
+
       - run: npm publish ./dist --provenance --access public --tag ${{ inputs.tag }}
 
       - name: Extract version from package.json
