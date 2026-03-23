@@ -27,6 +27,7 @@ Three Angular Material password strength components with a signals-based API. **
 
 | Library | Angular | Angular Material | zxcvbn |
 |---------|---------|------------------|--------|
+| `2.x` | `^20` | `^20` | `^4.4.2` |
 | `1.x` | `^19` | `^19` | `^4.4.2` |
 
 ## Installation
