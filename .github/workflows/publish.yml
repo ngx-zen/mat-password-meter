@@ -2,6 +2,16 @@ name: Publish to npm
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'npm dist-tag'
+        required: false
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - v1-lts
+          - v2-lts
 
 permissions:
   id-token: write # Required for OIDC
