@@ -22,9 +22,8 @@ import {
   DEFAULT_PASSWORD_RULE_OPTIONS,
   METER_STYLES,
   ZXCVBN_SCORE_MAP,
-  buildDisabledOptionsNudge,
   evaluateRules,
-  getMissingDisabledKeys,
+  resolveDisabledOptionsNudge,
   scoreFromChecks,
   scoreToColor,
   scoreToLabel,
@@ -80,14 +79,13 @@ export class PasswordStrengthComponent {
     this.ruleChecks().every((r: PasswordRuleCheck) => r.passed),
   );
 
-  protected readonly disabledOptionsNudge = computed((): string | null => {
-    const customFn = this.messages().disabledNudge;
-    if (customFn) {
-      const keys = getMissingDisabledKeys(this.password(), this.resolvedOptions());
-      return keys.length > 0 ? customFn(keys) || null : null;
-    }
-    return buildDisabledOptionsNudge(this.password(), this.resolvedOptions());
-  });
+  protected readonly disabledOptionsNudge = computed((): string | null =>
+    resolveDisabledOptionsNudge(
+      this.password(),
+      this.resolvedOptions(),
+      this.messages().disabledNudge,
+    ),
+  );
 
   protected readonly fullPanel = computed((): 'rules' | 'analysis' =>
     this.allRulesPassed() ? 'analysis' : 'rules',

@@ -16,6 +16,7 @@ export {
   evaluateRules,
   scoreFromChecks,
   buildDisabledOptionsNudge,
+  resolveDisabledOptionsNudge,
   getMissingDisabledKeys,
   DISABLED_KEY_LABELS,
 } from './shared/rules.utils';
