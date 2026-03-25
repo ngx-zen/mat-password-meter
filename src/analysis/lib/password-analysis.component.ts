@@ -12,6 +12,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import type {
   FeedbackMode,
   PasswordMeterMessages,
+  PasswordRuleOptions,
   ZxcvbnFn,
   ZxcvbnResult,
 } from '@ngx-zen/mat-password-meter';
@@ -21,6 +22,8 @@ import {
   ZXCVBN_SCORE_MAP,
   scoreToColor,
   scoreToLabel,
+  buildDisabledOptionsNudge,
+  getMissingDisabledKeys,
 } from '@ngx-zen/mat-password-meter';
 
 @Component({
@@ -36,9 +39,7 @@ export class PasswordAnalysisComponent {
   readonly password = input<string>('');
   readonly hideStrength = input<boolean>(true);
   readonly feedback = input<FeedbackMode>('contextual');
-  /** Names, emails, etc. — zxcvbn penalizes passwords that contain these. */
   readonly userInputs = input<string[]>([]);
-  /** Override any subset of the display messages. Pass '' for a key to suppress that message. */
   readonly messages = input<PasswordMeterMessages>(DEFAULT_PASSWORD_METER_MESSAGES);
 
   readonly strengthChange = output<number>();
@@ -64,16 +65,32 @@ export class PasswordAnalysisComponent {
   );
 
   protected readonly resolvedMessages = computed(
-    (): Required<PasswordMeterMessages> => ({
+    (): Required<Omit<PasswordMeterMessages, 'disabledNudge'>> => ({
       ...DEFAULT_PASSWORD_METER_MESSAGES,
       ...this.messages(),
     }),
   );
 
-  // While zxcvbn is loading show an indeterminate bar; avoids a flash of 0
   protected readonly barMode = computed(() =>
     this.password() && !this.zxcvbnReady() ? 'indeterminate' : 'determinate',
   );
+
+  private static readonly ALL_DISABLED: Required<PasswordRuleOptions> = {
+    min: 0,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    specialChar: false,
+  };
+
+  protected readonly disabledOptionsNudge = computed((): string | null => {
+    const customFn = this.messages().disabledNudge;
+    if (customFn) {
+      const keys = getMissingDisabledKeys(this.password(), PasswordAnalysisComponent.ALL_DISABLED);
+      return keys.length > 0 ? customFn(keys) || null : null;
+    }
+    return buildDisabledOptionsNudge(this.password(), PasswordAnalysisComponent.ALL_DISABLED);
+  });
 
   constructor() {
     import('zxcvbn')

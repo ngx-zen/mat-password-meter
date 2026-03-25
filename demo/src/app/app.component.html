@@ -47,6 +47,7 @@
     @case ('rules') {
       <mat-password-rules
         [password]="password"
+        [options]="demoOptions()"
         [hideStrength]="hideStrength()"
         [feedback]="feedback()"
         (strengthChange)="onStrengthChange($event)"
@@ -66,6 +67,7 @@
     @case ('strength') {
       <mat-password-strength
         [password]="password"
+        [options]="demoOptions()"
         [hideStrength]="hideStrength()"
         [feedback]="feedback()"
         [userInputs]="userInputs()"
@@ -95,6 +97,52 @@
         <mat-button-toggle value="contextual">contextual</mat-button-toggle>
         <mat-button-toggle value="full">full</mat-button-toggle>
       </mat-button-toggle-group>
+
+      @if (mode === 'rules' || mode === 'strength') {
+        <!-- Collapsible options section -->
+        <button class="options-panel-header grid-full-span" (click)="optionsOpen.set(!optionsOpen())">
+          <code>options</code>
+          <mat-icon class="expand-icon" [class.open]="optionsOpen()">expand_more</mat-icon>
+        </button>
+
+        <div class="options-body grid-full-span" [class.open]="optionsOpen()">
+          <div class="options-body-inner">
+            <div class="options-grid">
+              <span class="option-label"><code>min</code></span>
+              <div class="slider-row">
+                <mat-slider min="0" max="30" step="1" discrete>
+                  <input matSliderThumb [value]="minLength()" (valueChange)="minLength.set($event)" />
+                </mat-slider>
+                <span class="slider-value">{{ minLength() }}</span>
+              </div>
+
+              <span class="option-label"><code>lowercase</code></span>
+              <mat-button-toggle-group [value]="optLowercase()" (change)="optLowercase.set($event.value)">
+                <mat-button-toggle [value]="false">false</mat-button-toggle>
+                <mat-button-toggle [value]="true">true</mat-button-toggle>
+              </mat-button-toggle-group>
+
+              <span class="option-label"><code>uppercase</code></span>
+              <mat-button-toggle-group [value]="optUppercase()" (change)="optUppercase.set($event.value)">
+                <mat-button-toggle [value]="false">false</mat-button-toggle>
+                <mat-button-toggle [value]="true">true</mat-button-toggle>
+              </mat-button-toggle-group>
+
+              <span class="option-label"><code>number</code></span>
+              <mat-button-toggle-group [value]="optNumber()" (change)="optNumber.set($event.value)">
+                <mat-button-toggle [value]="false">false</mat-button-toggle>
+                <mat-button-toggle [value]="true">true</mat-button-toggle>
+              </mat-button-toggle-group>
+
+              <span class="option-label"><code>specialChar</code></span>
+              <mat-button-toggle-group [value]="optSpecialChar()" (change)="optSpecialChar.set($event.value)">
+                <mat-button-toggle [value]="false">false</mat-button-toggle>
+                <mat-button-toggle [value]="true">true</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+      }
 
       @if (mode === 'analysis' || mode === 'strength') {
         <span class="option-label"><code>userInputs</code></span>

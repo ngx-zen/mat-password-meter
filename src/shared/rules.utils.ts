@@ -1,4 +1,9 @@
-import type { PasswordRuleCheck, PasswordRuleLabels, PasswordRuleOptions } from './types';
+import type {
+  DisabledOptionKey,
+  PasswordRuleCheck,
+  PasswordRuleLabels,
+  PasswordRuleOptions,
+} from './types';
 
 const LOWERCASE_RE = /[a-z]/;
 const UPPERCASE_RE = /[A-Z]/;
@@ -32,7 +37,10 @@ export function evaluateRules(
     });
   }
   if (opts.number) {
-    checks.push({ label: labels?.number ?? 'At least 1 number', passed: NUMBER_RE.test(password) });
+    checks.push({
+      label: labels?.number ?? 'At least 1 number',
+      passed: NUMBER_RE.test(password),
+    });
   }
   if (opts.specialChar) {
     checks.push({
@@ -46,4 +54,35 @@ export function evaluateRules(
 export function scoreFromChecks(checks: PasswordRuleCheck[]): number {
   if (checks.length === 0) return 0;
   return Math.floor((checks.filter(c => c.passed).length / checks.length) * 100);
+}
+
+export function getMissingDisabledKeys(
+  password: string,
+  opts: Required<PasswordRuleOptions>,
+): DisabledOptionKey[] {
+  const missing: DisabledOptionKey[] = [];
+  if (!opts.lowercase && !LOWERCASE_RE.test(password)) missing.push('lowercase');
+  if (!opts.uppercase && !UPPERCASE_RE.test(password)) missing.push('uppercase');
+  if (!opts.number && !NUMBER_RE.test(password)) missing.push('number');
+  if (!opts.specialChar && !SPECIAL_CHAR_RE.test(password)) missing.push('specialChar');
+  return missing;
+}
+
+export const DISABLED_KEY_LABELS: Record<DisabledOptionKey, string> = {
+  lowercase: 'lowercase letters',
+  uppercase: 'uppercase letters',
+  number: 'numbers',
+  specialChar: 'special characters',
+};
+
+export function buildDisabledOptionsNudge(
+  password: string,
+  opts: Required<PasswordRuleOptions>,
+): string | null {
+  const keys = getMissingDisabledKeys(password, opts).slice(0, 3);
+  if (keys.length === 0) return null;
+  const items = keys.map(k => DISABLED_KEY_LABELS[k]);
+  if (items.length === 1) return `Try adding ${items[0]}`;
+  if (items.length === 2) return `Try adding ${items[0]} and ${items[1]}`;
+  return `Try adding ${items[0]}, ${items[1]}, and ${items[2]}`;
 }

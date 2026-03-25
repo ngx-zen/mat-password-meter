@@ -96,8 +96,8 @@ All three components share the same base inputs and outputs. Differences are not
 import type { PasswordRuleOptions, PasswordMeterMessages } from '@ngx-zen/mat-password-meter';
 ```
 
-> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`, `PasswordStrengthLabels`, `PasswordRuleLabels`  
-> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`  
+> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`, `PasswordStrengthLabels`, `PasswordRuleLabels`, `DisabledOptionKey`  
+> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`, `DISABLED_KEY_LABELS`  
 > **Utilities:** `evaluateRules`, `scoreFromChecks`
 
 ### `PasswordRuleOptions`
@@ -112,6 +112,37 @@ All properties optional; omitted keys fall back to defaults. Pass `false` to dis
 | `number` | `boolean` | `true` |
 | `specialChar` | `boolean` | `true` |
 
+### Disabled options & nudge messages
+
+When a composition option is set to `false`, it is no longer enforced — but the component still checks whether those character classes are present and may show a contextual **nudge** like:
+
+> *→ Try adding uppercase letters, numbers, and special characters*
+
+This applies to `PasswordStrengthComponent` (for disabled options) and `PasswordAnalysisComponent` (which always assumes all composition rules are disabled). The nudge appears in contextual mode when zxcvbn score < 4 and there are no warnings or suggestions. If the password already contains all character classes, the generic "Make it harder to guess." fallback is shown instead.
+
+### NIST alignment
+
+[NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html#passwordver) recommends **against** composition rules (mixed case, digits, special characters) and instead favors a longer minimum length. You can opt in to a NIST-aligned configuration with `PasswordStrengthComponent`:
+
+```ts
+const NIST_OPTIONS: PasswordRuleOptions = {
+  min: 15,
+  lowercase: false,
+  uppercase: false,
+  number: false,
+  specialChar: false,
+};
+```
+
+```html
+<mat-password-strength [password]="password" [options]="NIST_OPTIONS" />
+```
+
+With all composition rules disabled, only `min` is enforced. `PasswordStrengthComponent` will still evaluate entropy via zxcvbn and nudge users to add character diversity when the password could be stronger.
+
+> [!WARNING]
+> This configuration is not recommended for `PasswordRulesComponent`, which has no zxcvbn phase — it would reduce to a minimum-length check with no quality feedback.
+
 ### `PasswordMeterMessages`
 
 All properties optional; omitted keys fall back to defaults. For string keys, pass `''` to suppress that message entirely. Not all keys apply to every component.
@@ -120,26 +151,45 @@ All properties optional; omitted keys fall back to defaults. For string keys, pa
 |----------|------|---------|-------------|
 | `looksGreat` | `string` | `'Looks great!'` | Shown when strength is perfect |
 | `nudge` | `string` | `'Make it harder to guess.'` | Shown when zxcvbn score < 4 with no warning or suggestions. Ignored by `PasswordRulesComponent`. |
+| `disabledNudge` | `(missingKeys: DisabledOptionKey[]) => string` | — | Replaces the auto-generated disabled-options nudge. Ignored by `PasswordRulesComponent`. Receives the keys of disabled composition options whose character classes are missing (e.g. `['uppercase', 'number']`). Return `''` to suppress. |
 | `strengthLabels` | `PasswordStrengthLabels` | `{}` | Override the strength level labels below the bar |
 | `ruleLabels` | `PasswordRuleLabels` | `{}` | Override the per-rule checklist labels. Ignored by `PasswordAnalysisComponent`. |
 
 **Example:**
+```ts
+// in your component class
+
+// Custom labels for the disabled-options nudge (default: DISABLED_KEY_LABELS)
+private static readonly MY_LABELS: Record<DisabledOptionKey, string> = {
+  lowercase: 'maliliit na titik',
+  uppercase: 'malalaking titik',
+  number: 'mga numero',
+  specialChar: 'mga espesyal na karakter',
+};
+
+readonly messages: PasswordMeterMessages = {
+  looksGreat: 'Perpekto!',
+  nudge: '',
+  // Replace the default "Try adding …" nudge, or return '' to suppress
+  disabledNudge: (keys) => 'Subukang magdagdag ng ' + keys.map(k => MyComponent.MY_LABELS[k]).join(' at '),
+  strengthLabels: { veryWeak: 'Napakahina', veryStrong: 'Napakalakas' },
+  ruleLabels: { minLength: (n) => `Kailangan ng ${n} titik` },
+};
+```
 ```html
-<mat-password-strength
-  [password]="password"
-  [messages]="{
-    looksGreat: 'Perpekto!',
-    nudge: '',
-    strengthLabels: { veryWeak: 'Napakahina', veryStrong: 'Napakalakas' },
-    ruleLabels: { minLength: (n) => \`Kailangan ng ${n} titik\` }
-  }"
-/>
+<mat-password-strength [password]="password" [messages]="messages" />
 ```
 
 ### `PasswordStrengthLabels`
 
-Keys: `veryWeak` · `weak` · `fair` · `good` · `strong` · `veryStrong`  
-Defaults: `'Very Weak'` · `'Weak'` · `'Fair'` · `'Good'` · `'Strong'` · `'Very Strong'`
+| Key | Default |
+|-----|---------|
+| `veryWeak` | `'Very Weak'` |
+| `weak` | `'Weak'` |
+| `fair` | `'Fair'` |
+| `good` | `'Good'` |
+| `strong` | `'Strong'` |
+| `veryStrong` | `'Very Strong'` |
 
 ### `PasswordRuleLabels`
 
@@ -205,7 +255,8 @@ mat-password-strength {
 
 ## Acknowledgments
 
-Inspired by [`angular-material-extensions/password-strength`](https://github.com/angular-material-extensions/password-strength).
+Inspired by [`angular-material-extensions/password-strength`](https://github.com/angular-material-extensions/password-strength).  
+NIST alignment guidance suggested by [u/JimTheEarthling](https://www.reddit.com/user/JimTheEarthling) on Reddit.
 
 ## Contributing · Changelog · License
 

@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -7,10 +7,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
 import type { FeedbackMode } from '@ngx-zen/mat-password-meter';
-import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength';
 import { PasswordAnalysisComponent } from '@ngx-zen/mat-password-meter/analysis';
 import { PasswordRulesComponent } from '@ngx-zen/mat-password-meter/rules';
+import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength';
 
 type Mode = 'rules' | 'analysis' | 'strength';
 
@@ -25,6 +26,7 @@ type Mode = 'rules' | 'analysis' | 'strength';
     MatButtonModule,
     MatButtonToggleModule,
     MatChipsModule,
+    MatSliderModule,
     PasswordRulesComponent,
     PasswordStrengthComponent,
     PasswordAnalysisComponent,
@@ -41,6 +43,20 @@ export class AppComponent {
   feedback = signal<FeedbackMode>('contextual');
   hideStrength = signal(false);
 
+  minLength = signal(8);
+  optLowercase = signal(true);
+  optUppercase = signal(true);
+  optNumber = signal(true);
+  optSpecialChar = signal(true);
+
+  readonly demoOptions = computed(() => ({
+    min: this.minLength(),
+    lowercase: this.optLowercase(),
+    uppercase: this.optUppercase(),
+    number: this.optNumber(),
+    specialChar: this.optSpecialChar(),
+  }));
+
   toggleDarkMode(): void {
     const isDark = !this.darkMode();
     this.darkMode.set(isDark);
@@ -49,6 +65,7 @@ export class AppComponent {
 
   readonly currentStrength = signal(0);
   readonly isPasswordValid = signal(false);
+  readonly optionsOpen = signal(false);
 
   readonly strengthClass = computed(() => {
     const s = this.currentStrength();

@@ -20,12 +20,14 @@ import type {
 import {
   DEFAULT_PASSWORD_METER_MESSAGES,
   DEFAULT_PASSWORD_RULE_OPTIONS,
-  evaluateRules,
   METER_STYLES,
   ZXCVBN_SCORE_MAP,
+  buildDisabledOptionsNudge,
+  evaluateRules,
+  getMissingDisabledKeys,
+  scoreFromChecks,
   scoreToColor,
   scoreToLabel,
-  scoreFromChecks,
 } from '@ngx-zen/mat-password-meter';
 
 type MergedHint = { type: 'rule' | 'warning' | 'suggestion' | 'nudge' | 'ok'; text: string };
@@ -44,9 +46,7 @@ export class PasswordStrengthComponent {
   readonly options = input<PasswordRuleOptions>(DEFAULT_PASSWORD_RULE_OPTIONS);
   readonly hideStrength = input<boolean>(true);
   readonly feedback = input<FeedbackMode>('contextual');
-  /** Names, emails, etc. — zxcvbn penalizes passwords that contain these. */
   readonly userInputs = input<string[]>([]);
-  /** Override any subset of the display messages. Pass '' for a key to suppress that message. */
   readonly messages = input<PasswordMeterMessages>(DEFAULT_PASSWORD_METER_MESSAGES);
 
   readonly strengthChange = output<number>();
@@ -65,7 +65,6 @@ export class PasswordStrengthComponent {
     return fn ? fn(this.password(), this.userInputs()) : null;
   });
 
-  // zxcvbn score as a 0–100 percentage
   protected readonly zxcvbnPercent = computed((): number => {
     const result = this.zxcvbnResult();
     return result ? ZXCVBN_SCORE_MAP[result.score] : 0;
@@ -77,16 +76,25 @@ export class PasswordStrengthComponent {
 
   protected readonly rulesPercent = computed((): number => scoreFromChecks(this.ruleChecks()));
 
-  protected readonly allRulesPassed = computed(() => this.ruleChecks().every(r => r.passed));
+  protected readonly allRulesPassed = computed(() =>
+    this.ruleChecks().every((r: PasswordRuleCheck) => r.passed),
+  );
 
-  // full mode: show rules panel until all rules pass, then switch to analysis
+  protected readonly disabledOptionsNudge = computed((): string | null => {
+    const customFn = this.messages().disabledNudge;
+    if (customFn) {
+      const keys = getMissingDisabledKeys(this.password(), this.resolvedOptions());
+      return keys.length > 0 ? customFn(keys) || null : null;
+    }
+    return buildDisabledOptionsNudge(this.password(), this.resolvedOptions());
+  });
+
   protected readonly fullPanel = computed((): 'rules' | 'analysis' =>
     this.allRulesPassed() ? 'analysis' : 'rules',
   );
 
-  // priority order: first failing rule → zxcvbn warning → nudge → ok
   protected readonly resolvedMessages = computed(
-    (): Required<PasswordMeterMessages> => ({
+    (): Required<Omit<PasswordMeterMessages, 'disabledNudge'>> => ({
       ...DEFAULT_PASSWORD_METER_MESSAGES,
       ...this.messages(),
     }),
@@ -104,11 +112,12 @@ export class PasswordStrengthComponent {
     if (this.allRulesPassed() && this.zxcvbnPercent() === 100 && msgs.looksGreat) {
       return { type: 'ok', text: msgs.looksGreat };
     }
+    const nudge = this.disabledOptionsNudge();
+    if (nudge) return { type: 'suggestion', text: nudge };
     if (result && result.score < 4 && msgs.nudge) return { type: 'nudge', text: msgs.nudge };
     return null;
   });
 
-  // Phase 1: show rules progress until all pass; Phase 2: show zxcvbn score
   readonly strength = computed((): number => {
     if (!this.allRulesPassed()) return this.rulesPercent();
     return this.zxcvbnReady() ? this.zxcvbnPercent() : this.rulesPercent();

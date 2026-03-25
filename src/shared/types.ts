@@ -37,7 +37,8 @@ export interface ZxcvbnResult {
 
 export type ZxcvbnFn = (password: string, userInputs?: string[]) => ZxcvbnResult;
 
-// 'contextual': single inline hint (default) | 'full': progressive panel | 'hidden': nothing
+export type DisabledOptionKey = 'lowercase' | 'uppercase' | 'number' | 'specialChar';
+
 export type FeedbackMode = 'hidden' | 'contextual' | 'full';
 
 export type PasswordStrengthLabels = Partial<{
@@ -59,15 +60,15 @@ export type PasswordRuleLabels = Partial<{
 
 export type PasswordMeterMessages = Partial<{
   looksGreat: string;
-  /** Ignored by `PasswordRulesComponent`. */
   nudge: string;
-  /** Override displayed strength level labels. */
+  disabledNudge: (missingKeys: DisabledOptionKey[]) => string;
   strengthLabels: PasswordStrengthLabels;
-  /** Override displayed rule labels. Ignored by `PasswordAnalysisComponent`. */
   ruleLabels: PasswordRuleLabels;
 }>;
 
-export const DEFAULT_PASSWORD_METER_MESSAGES: Required<PasswordMeterMessages> = {
+export const DEFAULT_PASSWORD_METER_MESSAGES: Required<
+  Omit<PasswordMeterMessages, 'disabledNudge'>
+> = {
   looksGreat: 'Looks great!',
   nudge: 'Make it harder to guess.',
   strengthLabels: {},
