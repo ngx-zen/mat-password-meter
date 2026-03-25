@@ -1,7 +1,7 @@
 import {
   evaluateRules,
   scoreFromChecks,
-  buildDisabledOptionsNudge,
+  resolveDisabledOptionsNudge,
   getMissingDisabledKeys,
 } from './rules.utils';
 import { DEFAULT_PASSWORD_RULE_OPTIONS } from './types';
@@ -170,35 +170,37 @@ describe('rules.utils', () => {
     });
   });
 
-  describe('buildDisabledOptionsNudge', () => {
+  describe('resolveDisabledOptionsNudge (default nudge)', () => {
     const allEnabled: Required<typeof DEFAULT_PASSWORD_RULE_OPTIONS> = {
       ...DEFAULT_PASSWORD_RULE_OPTIONS,
     };
 
     it('should return null when all options are enabled', () => {
-      expect(buildDisabledOptionsNudge('abc', allEnabled)).toBeNull();
+      expect(resolveDisabledOptionsNudge('abc', allEnabled, undefined)).toBeNull();
     });
 
     it('should return null when disabled options are satisfied by password', () => {
       const opts = { ...allEnabled, uppercase: false };
-      expect(buildDisabledOptionsNudge('ABC', opts)).toBeNull();
+      expect(resolveDisabledOptionsNudge('ABC', opts, undefined)).toBeNull();
     });
 
     it('should return a single-item nudge', () => {
       const opts = { ...allEnabled, uppercase: false };
-      expect(buildDisabledOptionsNudge('abc', opts)).toBe('Try adding uppercase letters');
+      expect(resolveDisabledOptionsNudge('abc', opts, undefined)).toBe(
+        'Try adding uppercase letters',
+      );
     });
 
     it('should combine two missing classes with "and"', () => {
       const opts = { ...allEnabled, uppercase: false, number: false };
-      expect(buildDisabledOptionsNudge('abc', opts)).toBe(
+      expect(resolveDisabledOptionsNudge('abc', opts, undefined)).toBe(
         'Try adding uppercase letters and numbers',
       );
     });
 
     it('should combine three missing classes with commas and "and"', () => {
       const opts = { ...allEnabled, uppercase: false, number: false, specialChar: false };
-      expect(buildDisabledOptionsNudge('abc', opts)).toBe(
+      expect(resolveDisabledOptionsNudge('abc', opts, undefined)).toBe(
         'Try adding uppercase letters, numbers, and special characters',
       );
     });
@@ -211,7 +213,7 @@ describe('rules.utils', () => {
         number: false,
         specialChar: false,
       };
-      const result = buildDisabledOptionsNudge('12345678', opts);
+      const result = resolveDisabledOptionsNudge('12345678', opts, undefined);
       // password has numbers, so only lowercase, uppercase, specialChar are missing → 3 items
       expect(result).toBe(
         'Try adding lowercase letters, uppercase letters, and special characters',
@@ -219,7 +221,7 @@ describe('rules.utils', () => {
     });
 
     it('should return null when no composition options are disabled', () => {
-      expect(buildDisabledOptionsNudge('abc', allEnabled)).toBeNull();
+      expect(resolveDisabledOptionsNudge('abc', allEnabled, undefined)).toBeNull();
     });
   });
 });

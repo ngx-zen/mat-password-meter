@@ -76,26 +76,16 @@ export const DISABLED_KEY_LABELS: Record<DisabledOptionKey, string> = {
   specialChar: 'special characters',
 };
 
-export function buildDisabledOptionsNudge(
-  password: string,
-  opts: Required<PasswordRuleOptions>,
-): string | null {
-  const keys = getMissingDisabledKeys(password, opts).slice(0, 3);
-  if (keys.length === 0) return null;
-  const items = keys.map(k => DISABLED_KEY_LABELS[k]);
-  if (items.length === 1) return `Try adding ${items[0]}`;
-  if (items.length === 2) return `Try adding ${items[0]} and ${items[1]}`;
-  return `Try adding ${items[0]}, ${items[1]}, and ${items[2]}`;
-}
-
 export function resolveDisabledOptionsNudge(
   password: string,
   opts: Required<PasswordRuleOptions>,
   customFn: PasswordMeterMessages['disabledNudge'],
 ): string | null {
-  if (customFn) {
-    const keys = getMissingDisabledKeys(password, opts);
-    return keys.length > 0 ? customFn(keys) || null : null;
-  }
-  return buildDisabledOptionsNudge(password, opts);
+  const keys = getMissingDisabledKeys(password, opts);
+  if (keys.length === 0) return null;
+  if (customFn) return customFn(keys) || null;
+  const items = keys.slice(0, 3).map(k => DISABLED_KEY_LABELS[k]);
+  if (items.length === 1) return `Try adding ${items[0]}`;
+  if (items.length === 2) return `Try adding ${items[0]} and ${items[1]}`;
+  return `Try adding ${items[0]}, ${items[1]}, and ${items[2]}`;
 }

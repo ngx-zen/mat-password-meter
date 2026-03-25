@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Nudge in `PasswordStrengthComponent` and `PasswordAnalysisComponent` now suggests specific missing character classes before falling back to the generic "Make it harder to guess."
-- `DISABLED_KEY_LABELS` exported from primary entry point for i18n
 - `disabledNudge` callback added to `PasswordMeterMessages` to customize or suppress the nudge
 
 ### Fixed
