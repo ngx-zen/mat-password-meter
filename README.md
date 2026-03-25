@@ -97,7 +97,7 @@ import type { PasswordRuleOptions, PasswordMeterMessages } from '@ngx-zen/mat-pa
 ```
 
 > **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`, `PasswordStrengthLabels`, `PasswordRuleLabels`, `DisabledOptionKey`  
-> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`, `DISABLED_KEY_LABELS`  
+> **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`  
 > **Utilities:** `evaluateRules`, `scoreFromChecks`
 
 ### `PasswordRuleOptions`
@@ -159,7 +159,7 @@ All properties optional; omitted keys fall back to defaults. For string keys, pa
 ```ts
 // in your component class
 
-// Custom labels for the disabled-options nudge (default: DISABLED_KEY_LABELS)
+// Custom labels for the disabled-options nudge
 private static readonly MY_LABELS: Record<DisabledOptionKey, string> = {
   lowercase: 'maliliit na titik',
   uppercase: 'malalaking titik',
