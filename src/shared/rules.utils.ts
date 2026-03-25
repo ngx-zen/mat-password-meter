@@ -1,5 +1,6 @@
 import type {
   DisabledOptionKey,
+  PasswordMeterMessages,
   PasswordRuleCheck,
   PasswordRuleLabels,
   PasswordRuleOptions,
@@ -85,4 +86,16 @@ export function buildDisabledOptionsNudge(
   if (items.length === 1) return `Try adding ${items[0]}`;
   if (items.length === 2) return `Try adding ${items[0]} and ${items[1]}`;
   return `Try adding ${items[0]}, ${items[1]}, and ${items[2]}`;
+}
+
+export function resolveDisabledOptionsNudge(
+  password: string,
+  opts: Required<PasswordRuleOptions>,
+  customFn: PasswordMeterMessages['disabledNudge'],
+): string | null {
+  if (customFn) {
+    const keys = getMissingDisabledKeys(password, opts);
+    return keys.length > 0 ? customFn(keys) || null : null;
+  }
+  return buildDisabledOptionsNudge(password, opts);
 }
