@@ -64,9 +64,11 @@ npm test -- --coverage    # coverage report
 
 Tests use [Jest](https://jestjs.io/) via [jest-preset-angular](https://thymikee.github.io/jest-preset-angular/).
 
+For manual testing across all three components, see [docs/manual-testing.md](docs/manual-testing.md).
+
 ## Running the demo locally
 
-A minimal Angular app in `demo/` showcases all three components — Rules, Analysis, and Meter.
+A minimal Angular app in `demo/` showcases all three components — Rules, Analysis, and Strength.
 
 ### Option 1 — From source with hot reload (recommended)
 
@@ -109,13 +111,4 @@ npm run format:check    # check without writing (used in CI)
 ```
 
 If the pre-commit hook blocks your commit, run `npm run format` and re-stage the files.
-
-## Peer dependency: zxcvbn
-
-`zxcvbn` is an **optional** peer dependency. It is only required when using `PasswordAnalysisComponent` or `PasswordStrengthComponent`. `PasswordRulesComponent` is purely regex-based and has no dependency on `zxcvbn` at all.
-
-When `zxcvbn` is needed, it is lazy-loaded via a dynamic `import()` on first render — it is never bundled eagerly. `peerDependenciesMeta` in `src/package.json` marks it as optional so package managers do not warn consumers who only use the rules component.
-
-It is listed in both `demo/package.json` and the root `devDependencies` so the demo and unit tests work out of the box.
-
 

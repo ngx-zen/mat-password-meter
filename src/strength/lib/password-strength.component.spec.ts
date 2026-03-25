@@ -1,6 +1,6 @@
-﻿import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
+﻿import { ComponentRef } from '@angular/core';
+import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { ComponentRef } from '@angular/core';
 import { PasswordStrengthComponent } from './password-strength.component';
 
 // score 4 = 100% from zxcvbn, so rules drive the strength phase in these tests
@@ -42,21 +42,13 @@ describe('PasswordStrengthComponent', () => {
     });
 
     it('should show rulesPercent when rules are not yet satisfied', fakeAsync(() => {
-      // zxcvbn mock = score 4 → 100%. 'abc' only satisfies lowercase → 1/5 = 20%.
       componentRef.setInput('password', 'abc');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
       expect((component as any).zxcvbnPercent()).toBe(100);
       expect((component as any).rulesPercent()).toBe(20);
-      expect(component.strength()).toBe(20); // rules phase: 20%
+      expect(component.strength()).toBe(20);
     }));
 
     it('should reach 100 only when both entropy and all rules are fully satisfied', fakeAsync(() => {
@@ -85,15 +77,7 @@ describe('PasswordStrengthComponent', () => {
     }));
 
     it('should expose rulesPercent and zxcvbnPercent independently', fakeAsync(() => {
-      // 'Abcdefgh' satisfies 3/5 rules → rulesPercent = 60 (no number, no special char)
       componentRef.setInput('password', 'Abcdefgh');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       fixture.detectChanges();
       flushMicrotasks();
       fixture.detectChanges();
@@ -145,7 +129,7 @@ describe('PasswordStrengthComponent', () => {
       }));
 
       it('should show the analysis panel once all rules pass', fakeAsync(() => {
-        componentRef.setInput('password', 'Abcdef1!'); // satisfies all default rules; mock returns score 4
+        componentRef.setInput('password', 'Abcdef1!'); // satisfies all rules; mock returns score 4
         componentRef.setInput('feedback', 'full');
         fixture.detectChanges();
         flushMicrotasks();
@@ -521,6 +505,101 @@ describe('PasswordStrengthComponent', () => {
         fixture.detectChanges();
         expect(fixture.debugElement.query(By.css('.password-meter-hint.passed'))).toBeNull();
       }));
+
+      it('should use a custom disabledNudge function in contextual mode', fakeAsync(() => {
+        zxcvbnMock.mockReturnValue(makeResult(2));
+        componentRef.setInput('options', {
+          min: 8,
+          lowercase: true,
+          uppercase: false,
+          number: false,
+          specialChar: false,
+        });
+        componentRef.setInput('messages', {
+          disabledNudge: (keys: string[]) => `Custom: ${keys.join(', ')}`,
+        });
+        componentRef.setInput('password', 'abcdefgh'); // only lowercase, missing uppercase/number/special
+        componentRef.setInput('feedback', 'contextual');
+        fixture.detectChanges();
+        flushMicrotasks();
+        fixture.detectChanges();
+        expect(component.mergedHint()?.type).toBe('suggestion');
+        expect(fixture.nativeElement.textContent).toContain(
+          'Custom: uppercase, number, specialChar',
+        );
+      }));
+
+      it('should suppress nudge when custom disabledNudge returns empty string', fakeAsync(() => {
+        zxcvbnMock.mockReturnValue(makeResult(2));
+        componentRef.setInput('options', {
+          min: 8,
+          lowercase: true,
+          uppercase: false,
+          number: false,
+          specialChar: false,
+        });
+        componentRef.setInput('messages', { disabledNudge: () => '' });
+        componentRef.setInput('password', 'abcdefgh');
+        componentRef.setInput('feedback', 'contextual');
+        fixture.detectChanges();
+        flushMicrotasks();
+        fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Make it harder to guess.');
+      }));
+
+      it('should fall back to generic nudge when disabled options all present in password', fakeAsync(() => {
+        zxcvbnMock.mockReturnValue(makeResult(2));
+        componentRef.setInput('options', {
+          min: 8,
+          lowercase: true,
+          uppercase: false,
+          number: false,
+          specialChar: false,
+        });
+        componentRef.setInput('password', 'Abcdef1!'); // has all classes → nudge is null
+        componentRef.setInput('feedback', 'contextual');
+        fixture.detectChanges();
+        flushMicrotasks();
+        fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Make it harder to guess.');
+      }));
+
+      it('should show disabled-options nudge as contextual hint when disabled classes are missing', fakeAsync(() => {
+        zxcvbnMock.mockReturnValue(makeResult(2));
+        componentRef.setInput('options', {
+          min: 8,
+          lowercase: true,
+          uppercase: false,
+          number: false,
+          specialChar: false,
+        });
+        componentRef.setInput('password', 'abcdefgh'); // only lowercase, missing uppercase/number/special
+        componentRef.setInput('feedback', 'contextual');
+        fixture.detectChanges();
+        flushMicrotasks();
+        fixture.detectChanges();
+        expect(component.mergedHint()?.type).toBe('suggestion');
+        expect(fixture.nativeElement.textContent).toContain(
+          'Try adding uppercase letters, numbers, and special characters',
+        );
+      }));
+
+      it('should show disabled-options nudge in full mode template', fakeAsync(() => {
+        zxcvbnMock.mockReturnValue(makeResult(2));
+        componentRef.setInput('options', {
+          min: 8,
+          lowercase: true,
+          uppercase: false,
+          number: false,
+          specialChar: false,
+        });
+        componentRef.setInput('password', 'abcdefgh');
+        componentRef.setInput('feedback', 'full');
+        fixture.detectChanges();
+        flushMicrotasks();
+        fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Try adding');
+      }));
     });
 
     it('should use custom strengthLabels when provided', fakeAsync(() => {
@@ -569,6 +648,11 @@ describe('PasswordStrengthComponent', () => {
 
     it('should emit isValid false when strength is below 100', fakeAsync(() => {
       const validValues: boolean[] = [];
+      // First satisfy all rules so isValid emits true, then switch to failing
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
       const sub = component.isValid.subscribe(v => validValues.push(v));
       componentRef.setInput('password', 'abc');
       fixture.detectChanges();

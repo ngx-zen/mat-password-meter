@@ -1,11 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ViewEncapsulation,
   computed,
   effect,
   input,
   output,
+  ViewEncapsulation,
 } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import type {
@@ -19,9 +19,9 @@ import {
   DEFAULT_PASSWORD_RULE_OPTIONS,
   evaluateRules,
   METER_STYLES,
+  scoreFromChecks,
   scoreToColor,
   scoreToLabel,
-  scoreFromChecks,
 } from '@ngx-zen/mat-password-meter';
 
 @Component({
@@ -48,7 +48,7 @@ export class PasswordRulesComponent {
   );
 
   protected readonly resolvedMessages = computed(
-    (): Required<PasswordMeterMessages> => ({
+    (): Required<Omit<PasswordMeterMessages, 'disabledNudge'>> => ({
       ...DEFAULT_PASSWORD_METER_MESSAGES,
       ...this.messages(),
     }),

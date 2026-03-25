@@ -1,6 +1,6 @@
+import { ComponentRef } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { ComponentRef } from '@angular/core';
 import { PasswordAnalysisComponent } from './password-analysis.component';
 
 jest.mock('zxcvbn', () => ({
@@ -165,7 +165,7 @@ describe('PasswordAnalysisComponent', () => {
 
         it('should show "Make it harder to guess." when score is below 4 and no warning and no suggestions', fakeAsync(() => {
           zxcvbnMock.mockReturnValue(makeResult(2));
-          componentRef.setInput('password', 'test');
+          componentRef.setInput('password', 'aA1!');
           componentRef.setInput('feedback', 'contextual');
           fixture.detectChanges();
           flushMicrotasks();
@@ -206,6 +206,49 @@ describe('PasswordAnalysisComponent', () => {
           expect(hint.nativeElement.textContent).toContain('Use a longer keyboard pattern.');
           expect(fixture.debugElement.query(By.css('.password-meter-nudge'))).toBeNull();
         }));
+
+        it('should show disabledOptionsNudge when score < 4 and no warning/suggestions', fakeAsync(() => {
+          zxcvbnMock.mockReturnValue(makeResult(2));
+          componentRef.setInput('password', 'test');
+          componentRef.setInput('feedback', 'contextual');
+          fixture.detectChanges();
+          flushMicrotasks();
+          fixture.detectChanges();
+          const hint = fixture.debugElement.query(By.css('.password-meter-hint'));
+          expect(hint).toBeTruthy();
+          expect(hint.nativeElement.textContent).toContain(
+            'Try adding uppercase letters, numbers, and special characters',
+          );
+          expect(fixture.debugElement.query(By.css('.password-meter-nudge'))).toBeNull();
+        }));
+
+        it('should fall back to generic nudge when password has all character classes', fakeAsync(() => {
+          zxcvbnMock.mockReturnValue(makeResult(2));
+          componentRef.setInput('password', 'aA1!');
+          componentRef.setInput('feedback', 'contextual');
+          fixture.detectChanges();
+          flushMicrotasks();
+          fixture.detectChanges();
+          expect(fixture.debugElement.query(By.css('.password-meter-nudge'))).toBeTruthy();
+          expect(fixture.nativeElement.textContent).toContain('Make it harder to guess.');
+        }));
+
+        it('should use custom disabledNudge function from messages', fakeAsync(() => {
+          zxcvbnMock.mockReturnValue(makeResult(2));
+          componentRef.setInput('password', 'test');
+          componentRef.setInput('feedback', 'contextual');
+          componentRef.setInput('messages', {
+            disabledNudge: (keys: string[]) => `Consider adding ${keys.join(' and ')}`,
+          });
+          fixture.detectChanges();
+          flushMicrotasks();
+          fixture.detectChanges();
+          const hint = fixture.debugElement.query(By.css('.password-meter-hint'));
+          expect(hint).toBeTruthy();
+          expect(hint.nativeElement.textContent).toContain(
+            'Consider adding uppercase and number and specialChar',
+          );
+        }));
       });
 
       describe('full mode', () => {
@@ -221,20 +264,24 @@ describe('PasswordAnalysisComponent', () => {
           expect(hint.nativeElement.textContent).toContain('Looks great!');
         }));
 
-        it('should show "Make it harder to guess." when score is below 4 and no warning or suggestions', fakeAsync(() => {
+        it('should show disabled-options nudge when score is below 4 and no warning or suggestions', fakeAsync(() => {
           zxcvbnMock.mockReturnValue(makeResult(2));
           componentRef.setInput('password', 'test');
           componentRef.setInput('feedback', 'full');
           fixture.detectChanges();
           flushMicrotasks();
           fixture.detectChanges();
-          const el = fixture.debugElement.query(
-            By.css(
-              '.password-meter-container p:not(.password-meter-warning):not(.password-meter-hint)',
-            ),
-          );
-          expect(el).toBeTruthy();
-          expect(el.nativeElement.textContent).toContain('Make it harder to guess.');
+          expect(fixture.nativeElement.textContent).toContain('Try adding');
+        }));
+
+        it('should fall back to generic nudge when all character classes are present', fakeAsync(() => {
+          zxcvbnMock.mockReturnValue(makeResult(2));
+          componentRef.setInput('password', 'aA1!');
+          componentRef.setInput('feedback', 'full');
+          fixture.detectChanges();
+          flushMicrotasks();
+          fixture.detectChanges();
+          expect(fixture.nativeElement.textContent).toContain('Make it harder to guess.');
         }));
 
         it('should not show fallback when warning is present', fakeAsync(() => {
@@ -363,7 +410,7 @@ describe('PasswordAnalysisComponent', () => {
 
       it('should render a custom nudge message', fakeAsync(() => {
         zxcvbnMock.mockReturnValue(makeResult(2));
-        componentRef.setInput('password', 'test');
+        componentRef.setInput('password', 'aA1!');
         componentRef.setInput('feedback', 'contextual');
         componentRef.setInput('messages', { nudge: 'Try harder.' });
         fixture.detectChanges();

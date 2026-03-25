@@ -5,17 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.1] — 2026-03-23
-
-### Fixed
-
-- **Flash of "Very Weak" on input clear** — panel content is now hidden via `visibility: hidden` until the panel becomes active, eliminating the brief label flash when the password field is cleared
-
-## [2.0.0] — 2026-03-23
+## [2.0.0] — 2026-03-25
 
 ### Breaking Changes
 
 - **Requires Angular 20** (`^20.0.0`) and Angular Material 20 (`^20.0.0`)
+
+### Changed
+
+- Nudge in `PasswordStrengthComponent` and `PasswordAnalysisComponent` now suggests specific missing character classes before falling back to the generic "Make it harder to guess."
+- `DISABLED_KEY_LABELS` exported from primary entry point for i18n
+- `disabledNudge` callback added to `PasswordMeterMessages` to customise or suppress the nudge
+
+### Fixed
+
+- **Flash of "Very Weak" on input clear** — panel content is now hidden via `visibility: hidden` until the panel becomes active, eliminating the brief label flash when the password field is cleared
 
 ## [1.3.0] — 2026-03-23
 

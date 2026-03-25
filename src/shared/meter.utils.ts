@@ -10,7 +10,6 @@ export const ZXCVBN_SCORE_MAP: Record<ZxcvbnScore, number> = {
 
 export type StrengthColor = 'warn' | 'accent' | 'primary';
 
-// 0–20 → warn (red), 21–80 → accent (yellow), 81–100 → primary (green)
 const WARN_THRESHOLD = 21;
 const ACCENT_THRESHOLD = 81;
 

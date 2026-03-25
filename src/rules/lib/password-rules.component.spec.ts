@@ -1,6 +1,6 @@
+import { ComponentRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { ComponentRef } from '@angular/core';
 import { PasswordRulesComponent } from './password-rules.component';
 
 describe('PasswordRulesComponent', () => {
@@ -44,22 +44,13 @@ describe('PasswordRulesComponent', () => {
     });
 
     it('should merge partial options with defaults', () => {
-      // disabling specialChar leaves 4 active rules; 'Abcdef12' satisfies all 4
       componentRef.setInput('options', { specialChar: false });
       componentRef.setInput('password', 'Abcdef12');
       expect(component.strength()).toBe(100);
     });
 
     it('should give partial credit for partially met rules', () => {
-      // 'abc': only lowercase passes out of 5 rules → 1/5 = 20
       componentRef.setInput('password', 'abc');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.strength()).toBe(20);
     });
 
@@ -67,6 +58,7 @@ describe('PasswordRulesComponent', () => {
       componentRef.setInput('password', 'abcdefgh');
       componentRef.setInput('options', {
         min: 8,
+        lowercase: false,
         uppercase: false,
         number: false,
         specialChar: false,
@@ -76,7 +68,13 @@ describe('PasswordRulesComponent', () => {
 
     it('should detect special characters', () => {
       componentRef.setInput('password', '!!!!!!!!');
-      componentRef.setInput('options', { lowercase: false, uppercase: false, number: false });
+      componentRef.setInput('options', {
+        min: 0,
+        lowercase: false,
+        uppercase: false,
+        number: false,
+        specialChar: true,
+      });
       expect(component.strength()).toBe(100);
     });
 
@@ -102,25 +100,11 @@ describe('PasswordRulesComponent', () => {
 
     it('should return warn when strength is 20 (1/5 rules)', () => {
       componentRef.setInput('password', 'abc');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.color()).toBe('warn');
     });
 
     it('should return accent when strength is 60 (3/5 rules)', () => {
       componentRef.setInput('password', 'Abcdefgh');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.color()).toBe('accent');
     });
 
@@ -138,49 +122,21 @@ describe('PasswordRulesComponent', () => {
 
     it('should return "Weak" when strength is 20', () => {
       componentRef.setInput('password', 'abc');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.strengthLabel()).toBe('Weak');
     });
 
     it('should return "Fair" when strength is 40 (2/5 rules)', () => {
       componentRef.setInput('password', 'Abc');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.strengthLabel()).toBe('Fair');
     });
 
     it('should return "Good" when strength is 60 (3/5 rules)', () => {
       componentRef.setInput('password', 'Abcdefgh');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.strengthLabel()).toBe('Good');
     });
 
     it('should return "Strong" when strength is 80 (4/5 rules)', () => {
       componentRef.setInput('password', 'Abcdefg1');
-      componentRef.setInput('options', {
-        min: 8,
-        lowercase: true,
-        uppercase: true,
-        number: true,
-        specialChar: true,
-      });
       expect(component.strengthLabel()).toBe('Strong');
     });
 
@@ -192,13 +148,25 @@ describe('PasswordRulesComponent', () => {
 
   describe('ruleChecks()', () => {
     it('should return one entry per enabled rule', () => {
-      componentRef.setInput('options', { uppercase: false, number: false, specialChar: false });
+      componentRef.setInput('options', {
+        min: 8,
+        lowercase: true,
+        uppercase: false,
+        number: false,
+        specialChar: false,
+      });
       componentRef.setInput('password', 'abc');
-      expect(component.ruleChecks().length).toBe(2); // min + lowercase
+      expect(component.ruleChecks().length).toBe(2);
     });
 
     it('should mark a passing rule as passed', () => {
-      componentRef.setInput('options', { uppercase: false, number: false, specialChar: false });
+      componentRef.setInput('options', {
+        min: 8,
+        lowercase: true,
+        uppercase: false,
+        number: false,
+        specialChar: false,
+      });
       componentRef.setInput('password', 'abcdefgh');
       const lowercaseCheck = component
         .ruleChecks()
@@ -207,7 +175,13 @@ describe('PasswordRulesComponent', () => {
     });
 
     it('should mark a failing rule as not passed', () => {
-      componentRef.setInput('options', { lowercase: false, number: false, specialChar: false });
+      componentRef.setInput('options', {
+        min: 8,
+        lowercase: false,
+        uppercase: true,
+        number: false,
+        specialChar: false,
+      });
       componentRef.setInput('password', 'abcdefgh');
       const uppercaseCheck = component
         .ruleChecks()
@@ -261,7 +235,7 @@ describe('PasswordRulesComponent', () => {
       });
 
       it('should render the rule checklist when rules are pending', () => {
-        componentRef.setInput('password', 'abc'); // fails multiple rules → checklist shown
+        componentRef.setInput('password', 'abc');
         componentRef.setInput('feedback', 'full');
         fixture.detectChanges();
         const checklist = fixture.debugElement.query(By.css('.password-meter-rules'));
@@ -388,6 +362,8 @@ describe('PasswordRulesComponent', () => {
 
     it('should emit isValid false when rules are not all satisfied', () => {
       const validValues: boolean[] = [];
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
       const sub = component.isValid.subscribe(v => validValues.push(v));
       componentRef.setInput('password', 'abc');
       fixture.detectChanges();
