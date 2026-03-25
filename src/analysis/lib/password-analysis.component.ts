@@ -20,10 +20,9 @@ import {
   DEFAULT_PASSWORD_METER_MESSAGES,
   METER_STYLES,
   ZXCVBN_SCORE_MAP,
+  resolveDisabledOptionsNudge,
   scoreToColor,
   scoreToLabel,
-  buildDisabledOptionsNudge,
-  getMissingDisabledKeys,
 } from '@ngx-zen/mat-password-meter';
 
 @Component({
@@ -83,14 +82,13 @@ export class PasswordAnalysisComponent {
     specialChar: false,
   };
 
-  protected readonly disabledOptionsNudge = computed((): string | null => {
-    const customFn = this.messages().disabledNudge;
-    if (customFn) {
-      const keys = getMissingDisabledKeys(this.password(), PasswordAnalysisComponent.ALL_DISABLED);
-      return keys.length > 0 ? customFn(keys) || null : null;
-    }
-    return buildDisabledOptionsNudge(this.password(), PasswordAnalysisComponent.ALL_DISABLED);
-  });
+  protected readonly disabledOptionsNudge = computed((): string | null =>
+    resolveDisabledOptionsNudge(
+      this.password(),
+      PasswordAnalysisComponent.ALL_DISABLED,
+      this.messages().disabledNudge,
+    ),
+  );
 
   constructor() {
     import('zxcvbn')
