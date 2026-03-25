@@ -152,7 +152,7 @@ All properties optional; omitted keys fall back to defaults. For string keys, pa
 |----------|------|---------|-------------|
 | `looksGreat` | `string` | `'Looks great!'` | Shown when strength is perfect |
 | `nudge` | `string` | `'Make it harder to guess.'` | Shown when zxcvbn score < 4 with no warning or suggestions. Ignored by `PasswordRulesComponent`. |
-| `disabledNudge` | `(missingKeys: DisabledOptionKey[]) => string` | — | Replaces the auto-generated disabled-options nudge in contextual mode. Ignored by `PasswordRulesComponent`. Receives the keys of disabled composition options whose character classes are missing (e.g. `['uppercase', 'number']`). Return `''` to suppress. |
+| `disabledNudge` | `(missingKeys: DisabledOptionKey[]) => string` | — | Replaces the auto-generated disabled-options nudge. Ignored by `PasswordRulesComponent`. Receives the keys of disabled composition options whose character classes are missing (e.g. `['uppercase', 'number']`). Return `''` to suppress. |
 | `strengthLabels` | `PasswordStrengthLabels` | `{}` | Override the strength level labels below the bar |
 | `ruleLabels` | `PasswordRuleLabels` | `{}` | Override the per-rule checklist labels. Ignored by `PasswordAnalysisComponent`. |
 
