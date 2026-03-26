@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Nudge in `PasswordStrengthComponent` and `PasswordAnalysisComponent` now suggests specific missing character classes before falling back to the generic "Make it harder to guess."
 - `disabledNudge` callback added to `PasswordMeterMessages` to customize or suppress the nudge
 
+## [1.3.1] — 2026-03-23
+
 ### Fixed
 
 - **Flash of "Very Weak" on input clear** — panel content is now hidden via `visibility: hidden` until the panel becomes active, eliminating the brief label flash when the password field is cleared
