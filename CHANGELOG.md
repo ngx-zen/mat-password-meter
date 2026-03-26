@@ -22,9 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Bar color** — switches to `warn` while any custom rule fails, even if the strength score is 100%
-- **`fullPanel`** — `PasswordStrengthComponent` stays on the rules view while custom rules are failing
-- **`mergedHint`** — surfaces failing custom rules after built-in rule failures and before zxcvbn feedback
-- **`contextualHint`** — `PasswordRulesComponent` falls back to the first failing custom rule after built-in rule failures
+- **Hint priority** — both components now surface failing custom rules in their hint text: `PasswordStrengthComponent` shows them after built-in failures and before zxcvbn feedback; `PasswordRulesComponent` falls back to them once all built-in rules pass
+- **Full-mode panel** — `PasswordStrengthComponent` remains on the rules checklist while any custom rule is still failing
 
 ## [1.4.0] — 2026-03-25
 
