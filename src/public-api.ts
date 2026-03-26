@@ -5,6 +5,7 @@ export type {
   ZxcvbnResult,
   ZxcvbnScore,
   ZxcvbnFn,
+  CustomRulesFn,
   FeedbackMode,
   PasswordMeterMessages,
   PasswordStrengthLabels,

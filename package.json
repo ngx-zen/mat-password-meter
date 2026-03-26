@@ -45,6 +45,9 @@
     "zone.js": "^0.15.1",
     "zxcvbn": "^4.4.2"
   },
+  "overrides": {
+    "picomatch": "4.0.4"
+  },
   "sideEffects": false,
   "lint-staged": {
     "src/**/*.{ts,html,scss,json}": "prettier --check",
