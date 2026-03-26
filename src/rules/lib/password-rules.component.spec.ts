@@ -371,4 +371,94 @@ describe('PasswordRulesComponent', () => {
       sub.unsubscribe();
     });
   });
+
+  describe('customRules', () => {
+    const noUsername = (pw: string) => [
+      { label: 'Must not contain username', passed: !pw.includes('admin') },
+    ];
+
+    it('should expose custom rule checks in customRuleChecks()', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      const labels = component.customRuleChecks().map(r => r.label);
+      expect(labels).toContain('Must not contain username');
+    });
+
+    it('should not include custom rules in ruleChecks()', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      expect(component.ruleChecks().length).toBe(5);
+    });
+
+    it('should not affect strength when custom rule fails', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      fixture.detectChanges();
+      expect(component.strength()).toBe(100);
+    });
+
+    it('should block isValid when custom rule fails even if strength is 100', () => {
+      const validValues: boolean[] = [];
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      fixture.detectChanges();
+      expect(validValues).toContain(false);
+      sub.unsubscribe();
+    });
+
+    it('should emit isValid true when all built-in and custom rules pass', () => {
+      const validValues: boolean[] = [];
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      fixture.detectChanges();
+      expect(validValues).toContain(true);
+      sub.unsubscribe();
+    });
+
+    it('should show custom rule failure as contextual hint', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      fixture.detectChanges();
+      expect(component.contextualHint()?.label).toBe('Must not contain username');
+    });
+
+    it('should show built-in failure first when both fail', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin');
+      fixture.detectChanges();
+      expect(component.contextualHint()?.label).toBe('At least 8 characters');
+    });
+
+    it('should return empty customRuleChecks when customRules is undefined', () => {
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      expect(component.customRuleChecks().length).toBe(0);
+    });
+
+    it('should return empty customRuleChecks when password is empty', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', '');
+      fixture.detectChanges();
+      expect(component.customRuleChecks().length).toBe(0);
+    });
+
+    it('should override color to warn when custom rule fails even if strength is 100', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      fixture.detectChanges();
+      expect(component.strength()).toBe(100);
+      expect(component.color()).toBe('warn');
+    });
+
+    it('should use normal color when custom rules all pass', () => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      expect(component.color()).toBe('primary');
+    });
+  });
 });

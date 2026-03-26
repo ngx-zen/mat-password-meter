@@ -675,4 +675,105 @@ describe('PasswordStrengthComponent', () => {
       expect(zxcvbnMock).toHaveBeenCalledWith('Abcdef1!', ['john', 'doe']);
     }));
   });
+
+  describe('customRules', () => {
+    const noUsername = (pw: string) => [
+      { label: 'Must not contain username', passed: !pw.includes('admin') },
+    ];
+
+    it('should expose custom rule checks in customRuleChecks()', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      const labels = component.customRuleChecks().map(r => r.label);
+      expect(labels).toContain('Must not contain username');
+    }));
+
+    it('should not include custom rules in ruleChecks()', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.ruleChecks().length).toBe(5);
+    }));
+
+    it('should not affect strength when custom rule fails', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.strength()).toBe(100);
+    }));
+
+    it('should block isValid when custom rule fails even if built-in rules and zxcvbn pass', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      const validValues: boolean[] = [];
+      const sub = component.isValid.subscribe(v => validValues.push(v));
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(validValues).toContain(false);
+      sub.unsubscribe();
+    }));
+
+    it('should show custom rule failure in mergedHint when built-in rules pass', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.mergedHint()?.type).toBe('rule');
+      expect(component.mergedHint()?.text).toBe('Must not contain username');
+    }));
+
+    it('should keep built-in rules as first failing hint when both fail', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.mergedHint()?.text).toBe('At least 8 characters');
+    }));
+
+    it('should return empty customRuleChecks when customRules is undefined', fakeAsync(() => {
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.customRuleChecks().length).toBe(0);
+    }));
+
+    it('should return empty customRuleChecks when password is empty', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', '');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.customRuleChecks().length).toBe(0);
+    }));
+
+    it('should override color to warn when custom rule fails even if strength is 100', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'admin1A!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.strength()).toBe(100);
+      expect(component.color()).toBe('warn');
+    }));
+
+    it('should use normal color when custom rules all pass', fakeAsync(() => {
+      componentRef.setInput('customRules', noUsername);
+      componentRef.setInput('password', 'Abcdef1!');
+      fixture.detectChanges();
+      flushMicrotasks();
+      fixture.detectChanges();
+      expect(component.color()).toBe('primary');
+    }));
+  });
 });

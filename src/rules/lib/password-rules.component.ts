@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import type {
+  CustomRulesFn,
   FeedbackMode,
   PasswordMeterMessages,
   PasswordRuleCheck,
@@ -39,6 +40,7 @@ export class PasswordRulesComponent {
   readonly hideStrength = input<boolean>(true);
   readonly feedback = input<FeedbackMode>('contextual');
   readonly messages = input<PasswordMeterMessages>(DEFAULT_PASSWORD_METER_MESSAGES);
+  readonly customRules = input<CustomRulesFn | undefined>(undefined);
 
   readonly strengthChange = output<number>();
   readonly isValid = output<boolean>();
@@ -58,21 +60,34 @@ export class PasswordRulesComponent {
     evaluateRules(this.password(), this.resolvedOptions(), this.resolvedMessages().ruleLabels),
   );
 
+  readonly customRuleChecks = computed((): PasswordRuleCheck[] => {
+    const pw = this.password();
+    const custom = this.customRules();
+    return custom && pw ? custom(pw) : [];
+  });
+
+  protected readonly failingCustomRules = computed((): PasswordRuleCheck[] =>
+    this.customRuleChecks().filter(r => !r.passed),
+  );
+
   readonly strength = computed((): number => scoreFromChecks(this.ruleChecks()));
 
-  readonly color = computed(() => scoreToColor(this.strength()));
+  readonly color = computed(() =>
+    this.failingCustomRules().length > 0 ? 'warn' : scoreToColor(this.strength()),
+  );
   readonly strengthLabel = computed(() =>
     scoreToLabel(this.strength(), this.resolvedMessages().strengthLabels),
   );
   readonly contextualHint = computed(
-    (): PasswordRuleCheck | null => this.ruleChecks().find(r => !r.passed) ?? null,
+    (): PasswordRuleCheck | null =>
+      this.ruleChecks().find(r => !r.passed) ?? this.failingCustomRules()[0] ?? null,
   );
 
   constructor() {
     effect(() => {
       const s = this.strength();
       this.strengthChange.emit(s);
-      this.isValid.emit(s === 100);
+      this.isValid.emit(s === 100 && this.failingCustomRules().length === 0);
     });
   }
 }

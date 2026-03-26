@@ -37,6 +37,8 @@ export interface ZxcvbnResult {
 
 export type ZxcvbnFn = (password: string, userInputs?: string[]) => ZxcvbnResult;
 
+export type CustomRulesFn = (password: string) => PasswordRuleCheck[];
+
 export type DisabledOptionKey = 'lowercase' | 'uppercase' | 'number' | 'specialChar';
 
 export type FeedbackMode = 'hidden' | 'contextual' | 'full';
