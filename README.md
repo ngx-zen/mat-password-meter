@@ -18,8 +18,11 @@ Three Angular Material password strength components with a signals-based API. **
 
 ## Features
 
-- Standalone, no `NgModule`; signals-based API (`input()`, `output()`, `computed()`)
+- Three components: rules-only, entropy-only, or combined — use only what you need
+- Signals-based API — reactive `input()`, `output()`, and `computed()` throughout
 - Three feedback modes: `'contextual'` hint, `'full'` panel, or `'hidden'`
+- Extensible with app-specific rules via `customRules` — e.g. "must not contain username"
+- Fully customizable display strings via `messages` — localize labels, hints, and nudges
 - [zxcvbn](https://github.com/dropbox/zxcvbn) lazy-loaded — no bundle cost when using only `PasswordRulesComponent`
 - Fully themeable via CSS custom properties; adapts to light/dark themes automatically
 
@@ -35,8 +38,10 @@ Three Angular Material password strength components with a signals-based API. **
 npm install @ngx-zen/mat-password-meter zxcvbn
 ```
 
+> [!TIP]
 > **Only using `PasswordRulesComponent`?** You can skip `zxcvbn` — it's not needed for that entry point.
 
+> [!NOTE]
 > Requires Angular Material with animations and a theme. See the [Angular Material getting started guide](https://material.angular.io/guide/getting-started).
 
 ---
@@ -76,9 +81,10 @@ All three components share the same base inputs and outputs. Differences are not
 |-------|------|---------|-------------|
 | `password` | `string` | `''` | Password to evaluate |
 | `options` | `PasswordRuleOptions` | see below | Policy rules. Not used by `PasswordAnalysisComponent`. |
-| `hideStrength` | `boolean` | `true` | Show/hide the strength label below the bar |
+| `hideStrength` | `boolean` | `true` | Hide the strength label below the bar |
 | `feedback` | `FeedbackMode` | `'contextual'` | `'contextual'`, `'full'`, or `'hidden'` |
 | `userInputs` | `string[]` | `[]` | Strings passed to zxcvbn to penalize personal info. Not used by `PasswordRulesComponent`. |
+| `customRules` | `CustomRulesFn` | — | App-specific policy gates. Block `isValid` and show as failing hints when violated; do not affect score. Not used by `PasswordAnalysisComponent`. |
 | `messages` | `PasswordMeterMessages` | see below | Override any subset of display strings |
 
 **Outputs**
@@ -93,10 +99,10 @@ All three components share the same base inputs and outputs. Differences are not
 ## Shared types
 
 ```ts
-import type { PasswordRuleOptions, PasswordMeterMessages } from '@ngx-zen/mat-password-meter';
+import type { PasswordRuleOptions, PasswordMeterMessages, CustomRulesFn } from '@ngx-zen/mat-password-meter';
 ```
 
-> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`, `PasswordStrengthLabels`, `PasswordRuleLabels`, `DisabledOptionKey`  
+> **Types:** `PasswordRuleOptions`, `PasswordRuleCheck`, `FeedbackMode`, `ZxcvbnResult`, `PasswordMeterMessages`, `PasswordStrengthLabels`, `PasswordRuleLabels`, `DisabledOptionKey`, `CustomRulesFn`  
 > **Constants:** `DEFAULT_PASSWORD_RULE_OPTIONS`, `DEFAULT_PASSWORD_METER_MESSAGES`  
 > **Utilities:** `evaluateRules`, `scoreFromChecks`
 
@@ -112,37 +118,6 @@ All properties optional; omitted keys fall back to defaults. Pass `false` to dis
 | `number` | `boolean` | `true` |
 | `specialChar` | `boolean` | `true` |
 
-### Disabled options & nudge messages
-
-When a composition option is set to `false`, it is no longer enforced — but the component still checks whether those character classes are present and may show a contextual **nudge** like:
-
-> *→ Try adding uppercase letters, numbers, and special characters*
-
-This applies to `PasswordStrengthComponent` (for disabled options) and `PasswordAnalysisComponent` (which always assumes all composition rules are disabled). The nudge appears in contextual mode when zxcvbn score < 4 and there are no warnings or suggestions. If the password already contains all character classes, the generic "Make it harder to guess." fallback is shown instead.
-
-### NIST alignment
-
-[NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html#passwordver) recommends **against** composition rules (mixed case, digits, special characters) and instead favors a longer minimum length. You can opt in to a NIST-aligned configuration with `PasswordStrengthComponent`:
-
-```ts
-const NIST_OPTIONS: PasswordRuleOptions = {
-  min: 15,
-  lowercase: false,
-  uppercase: false,
-  number: false,
-  specialChar: false,
-};
-```
-
-```html
-<mat-password-strength [password]="password" [options]="NIST_OPTIONS" />
-```
-
-With all composition rules disabled, only `min` is enforced. `PasswordStrengthComponent` will still evaluate entropy via zxcvbn and nudge users to add character diversity when the password could be stronger.
-
-> [!WARNING]
-> This configuration is not recommended for `PasswordRulesComponent`, which has no zxcvbn phase — it would reduce to a minimum-length check with no quality feedback.
-
 ### `PasswordMeterMessages`
 
 All properties optional; omitted keys fall back to defaults. For string keys, pass `''` to suppress that message entirely. Not all keys apply to every component.
@@ -150,15 +125,13 @@ All properties optional; omitted keys fall back to defaults. For string keys, pa
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `looksGreat` | `string` | `'Looks great!'` | Shown when strength is perfect |
-| `nudge` | `string` | `'Make it harder to guess.'` | Shown when zxcvbn score < 4 with no warning or suggestions. Ignored by `PasswordRulesComponent`. |
-| `disabledNudge` | `(missingKeys: DisabledOptionKey[]) => string` | — | Replaces the auto-generated disabled-options nudge. Ignored by `PasswordRulesComponent`. Receives the keys of disabled composition options whose character classes are missing (e.g. `['uppercase', 'number']`). Return `''` to suppress. |
+| `nudge` | `string` | `'Make it harder to guess.'` | Shown when zxcvbn score < 4 with no warning or suggestions. Not used by `PasswordRulesComponent`. |
+| `disabledNudge` | `(missingKeys: DisabledOptionKey[]) => string` | — | Replaces the auto-generated disabled-options nudge. Not used by `PasswordRulesComponent`. Receives the keys of disabled composition options whose character classes are missing (e.g. `['uppercase', 'number']`). Return `''` to suppress. |
 | `strengthLabels` | `PasswordStrengthLabels` | `{}` | Override the strength level labels below the bar |
-| `ruleLabels` | `PasswordRuleLabels` | `{}` | Override the per-rule checklist labels. Ignored by `PasswordAnalysisComponent`. |
+| `ruleLabels` | `PasswordRuleLabels` | `{}` | Override the per-rule checklist labels. Not used by `PasswordAnalysisComponent`. |
 
-**Example:**
+**Example** — overriding display strings for Filipino localization:
 ```ts
-// in your component class
-
 // Custom labels for the disabled-options nudge
 private static readonly MY_LABELS: Record<DisabledOptionKey, string> = {
   lowercase: 'maliliit na titik',
@@ -180,7 +153,8 @@ readonly messages: PasswordMeterMessages = {
 <mat-password-strength [password]="password" [messages]="messages" />
 ```
 
-### `PasswordStrengthLabels`
+<details>
+<summary><code>PasswordStrengthLabels</code></summary>
 
 | Key | Default |
 |-----|---------|
@@ -191,7 +165,10 @@ readonly messages: PasswordMeterMessages = {
 | `strong` | `'Strong'` |
 | `veryStrong` | `'Very Strong'` |
 
-### `PasswordRuleLabels`
+</details>
+
+<details>
+<summary><code>PasswordRuleLabels</code></summary>
 
 | Key | Default |
 |-----|---------|
@@ -203,6 +180,55 @@ readonly messages: PasswordMeterMessages = {
 
 > **Need translated zxcvbn feedback strings?** The `warning` and `suggestions` shown by `PasswordAnalysisComponent` and `PasswordStrengthComponent` come directly from zxcvbn and are always English. [Open an issue](https://github.com/ngx-zen/mat-password-meter/issues) if you need `@zxcvbn-ts` support.
 
+</details>
+
+---
+
+## Configuration
+
+### Custom rules
+
+Use the `customRules` input to add app-specific checks (e.g. "must not contain username"). Custom rules act as **gates** — they block `isValid` and appear as failing hints when violated, but they do **not** affect the strength score. The progress bar color switches to `warn` while any custom rule fails, even if the strength score is 100%. Only failing custom rules are shown; passing ones are hidden.
+
+```ts
+import type { CustomRulesFn } from '@ngx-zen/mat-password-meter';
+
+readonly customRules: CustomRulesFn = (password) => [
+  { label: 'Must not contain username', passed: !password.includes(this.username) },
+  { label: 'Must not match a previous password', passed: !this.previousPasswords.includes(password) },
+];
+```
+
+```html
+<mat-password-strength [password]="password" [customRules]="customRules" />
+<mat-password-rules    [password]="password" [customRules]="customRules" />
+```
+
+> `customRules` is not used by `PasswordAnalysisComponent` — it has no rule phase.
+
+### NIST alignment
+
+[NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html#passwordver) recommends **against** composition rules (mixed case, digits, special characters) and instead favors a longer minimum length. You can opt in to a NIST-aligned configuration with `PasswordStrengthComponent`:
+
+```ts
+const NIST_OPTIONS: PasswordRuleOptions = {
+  min: 15,
+  lowercase: false,
+  uppercase: false,
+  number: false,
+  specialChar: false,
+};
+```
+
+```html
+<mat-password-strength [password]="password" [options]="NIST_OPTIONS" />
+```
+
+With all composition rules disabled, only `min` is enforced. `PasswordStrengthComponent` will still evaluate entropy via zxcvbn and may show a contextual nudge (e.g. *"→ Try adding uppercase letters…"*) when the score is low. This also applies to `PasswordAnalysisComponent`. Customize or suppress the nudge via the `disabledNudge` callback in `messages`.
+
+> [!WARNING]
+> This configuration is not recommended for `PasswordRulesComponent`, which has no zxcvbn phase — it would reduce to a minimum-length check with no quality feedback.
+
 ---
 
 ## Direct signal access
@@ -210,9 +236,9 @@ readonly messages: PasswordMeterMessages = {
 Public computed signals accessible via `viewChild`:
 
 | Component | Signals |
-|-----------|---------|
-| `PasswordStrengthComponent` | `strength`, `ruleChecks`, `zxcvbnResult`, `mergedHint`, `color`, `strengthLabel` |
-| `PasswordRulesComponent` | `strength`, `ruleChecks`, `contextualHint`, `color`, `strengthLabel` |
+|-----------|--------|
+| `PasswordStrengthComponent` | `strength`, `ruleChecks`, `customRuleChecks`, `zxcvbnResult`, `mergedHint`, `color`, `strengthLabel` |
+| `PasswordRulesComponent` | `strength`, `ruleChecks`, `customRuleChecks`, `contextualHint`, `color`, `strengthLabel` |
 | `PasswordAnalysisComponent` | `strength`, `zxcvbnResult`, `color`, `strengthLabel` |
 
 ```ts

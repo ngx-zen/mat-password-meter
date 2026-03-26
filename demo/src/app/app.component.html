@@ -50,6 +50,7 @@
         [options]="demoOptions()"
         [hideStrength]="hideStrength()"
         [feedback]="feedback()"
+        [customRules]="customRules"
         (strengthChange)="onStrengthChange($event)"
         (isValid)="onIsValid($event)"
       />
@@ -71,6 +72,7 @@
         [hideStrength]="hideStrength()"
         [feedback]="feedback()"
         [userInputs]="userInputs()"
+        [customRules]="customRules"
         (strengthChange)="onStrengthChange($event)"
         (isValid)="onIsValid($event)"
       />
@@ -80,6 +82,15 @@
   <!-- Playground options -->
   <div class="options-panel">
     <p class="options-panel-title">Playground options</p>
+
+    @if (mode === 'rules' || mode === 'strength') {
+      <p class="custom-rules-hint">
+        Custom rules active &mdash; try
+        <code>Demo2024!</code>
+        or
+        <code>Welcome1!</code>
+      </p>
+    }
 
     <div class="options-grid">
       <!-- Inputs -->

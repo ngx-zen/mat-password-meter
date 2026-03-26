@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-03-26
+
+### Added
+
+- **`customRules` input** — app-specific policy gates (e.g. "Must not contain username") on `PasswordStrengthComponent` and `PasswordRulesComponent`; block `isValid` and appear as failing hints when violated but do not affect the strength score
+- **`CustomRulesFn` type** — exported from the primary entry point and all secondary entry points that use rules
+- **`customRuleChecks` signal** — public computed signal on `PasswordStrengthComponent` and `PasswordRulesComponent` exposing evaluated custom rule results
+
+### Changed
+
+- **Bar color** — switches to `warn` while any custom rule fails, even if the strength score is 100%
+- **`fullPanel`** — `PasswordStrengthComponent` stays on the rules view while custom rules are failing
+- **`mergedHint`** — surfaces failing custom rules after built-in rule failures and before zxcvbn feedback
+- **`contextualHint`** — `PasswordRulesComponent` falls back to the first failing custom rule after built-in rule failures
+
 ## [1.4.0] — 2026-03-25
 
 ### Changed
@@ -101,6 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSS custom properties** — `--pm-weak-color`, `--pm-medium-color`, `--pm-strong-color`, `--pm-buffer-color`
 - Live demo: [ngx-zen.github.io/mat-password-meter](https://ngx-zen.github.io/mat-password-meter/)
 
+[1.5.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/ngx-zen/mat-password-meter/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.2.0...v1.3.0

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import type {
+  CustomRulesFn,
   FeedbackMode,
   PasswordMeterMessages,
   PasswordRuleCheck,
@@ -47,6 +48,7 @@ export class PasswordStrengthComponent {
   readonly feedback = input<FeedbackMode>('contextual');
   readonly userInputs = input<string[]>([]);
   readonly messages = input<PasswordMeterMessages>(DEFAULT_PASSWORD_METER_MESSAGES);
+  readonly customRules = input<CustomRulesFn | undefined>(undefined);
 
   readonly strengthChange = output<number>();
   readonly isValid = output<boolean>();
@@ -73,6 +75,16 @@ export class PasswordStrengthComponent {
     evaluateRules(this.password(), this.resolvedOptions(), this.resolvedMessages().ruleLabels),
   );
 
+  readonly customRuleChecks = computed((): PasswordRuleCheck[] => {
+    const pw = this.password();
+    const custom = this.customRules();
+    return custom && pw ? custom(pw) : [];
+  });
+
+  protected readonly failingCustomRules = computed((): PasswordRuleCheck[] =>
+    this.customRuleChecks().filter(r => !r.passed),
+  );
+
   protected readonly rulesPercent = computed((): number => scoreFromChecks(this.ruleChecks()));
 
   protected readonly allRulesPassed = computed(() =>
@@ -88,7 +100,7 @@ export class PasswordStrengthComponent {
   );
 
   protected readonly fullPanel = computed((): 'rules' | 'analysis' =>
-    this.allRulesPassed() ? 'analysis' : 'rules',
+    this.allRulesPassed() && this.failingCustomRules().length === 0 ? 'analysis' : 'rules',
   );
 
   protected readonly resolvedMessages = computed(
@@ -101,13 +113,20 @@ export class PasswordStrengthComponent {
   readonly mergedHint = computed((): MergedHint | null => {
     const failingRule = this.ruleChecks().find(r => !r.passed);
     if (failingRule) return { type: 'rule', text: failingRule.label };
+    const failingCustom = this.failingCustomRules()[0];
+    if (failingCustom) return { type: 'rule', text: failingCustom.label };
     const result = this.zxcvbnResult();
     if (result?.feedback.warning) return { type: 'warning', text: result.feedback.warning };
     if (result?.feedback.suggestions[0]) {
       return { type: 'suggestion', text: result.feedback.suggestions[0] };
     }
     const msgs = this.resolvedMessages();
-    if (this.allRulesPassed() && this.zxcvbnPercent() === 100 && msgs.looksGreat) {
+    if (
+      this.allRulesPassed() &&
+      this.failingCustomRules().length === 0 &&
+      this.zxcvbnPercent() === 100 &&
+      msgs.looksGreat
+    ) {
       return { type: 'ok', text: msgs.looksGreat };
     }
     const nudge = this.disabledOptionsNudge();
@@ -121,7 +140,9 @@ export class PasswordStrengthComponent {
     return this.zxcvbnReady() ? this.zxcvbnPercent() : this.rulesPercent();
   });
 
-  readonly color = computed(() => scoreToColor(this.strength()));
+  readonly color = computed(() =>
+    this.failingCustomRules().length > 0 ? 'warn' : scoreToColor(this.strength()),
+  );
   readonly strengthLabel = computed(() =>
     scoreToLabel(this.strength(), this.resolvedMessages().strengthLabels),
   );
@@ -144,7 +165,11 @@ export class PasswordStrengthComponent {
     effect(() => {
       const s = this.strength();
       this.strengthChange.emit(s);
-      this.isValid.emit(this.allRulesPassed() && this.zxcvbnPercent() === 100);
+      this.isValid.emit(
+        this.allRulesPassed() &&
+          this.failingCustomRules().length === 0 &&
+          this.zxcvbnPercent() === 100,
+      );
     });
   }
 }

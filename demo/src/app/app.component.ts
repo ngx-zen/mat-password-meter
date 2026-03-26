@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
-import type { FeedbackMode } from '@ngx-zen/mat-password-meter';
+import type { CustomRulesFn, FeedbackMode } from '@ngx-zen/mat-password-meter';
 import { PasswordAnalysisComponent } from '@ngx-zen/mat-password-meter/analysis';
 import { PasswordRulesComponent } from '@ngx-zen/mat-password-meter/rules';
 import { PasswordStrengthComponent } from '@ngx-zen/mat-password-meter/strength';
@@ -48,6 +48,16 @@ export class AppComponent {
   optUppercase = signal(true);
   optNumber = signal(true);
   optSpecialChar = signal(true);
+
+  readonly previousPasswords = ['Welcome1!', 'Summer2024!'];
+
+  readonly customRules: CustomRulesFn = password => [
+    { label: 'Must not contain username', passed: !password.toLowerCase().includes('demo') },
+    {
+      label: 'Must not match a previous password',
+      passed: !this.previousPasswords.includes(password),
+    },
+  ];
 
   readonly demoOptions = computed(() => ({
     min: this.minLength(),

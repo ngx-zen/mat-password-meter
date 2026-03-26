@@ -1,7 +1,7 @@
 {
   "name": "@ngx-zen/mat-password-meter-workspace",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Development workspace for @ngx-zen/mat-password-meter",
   "author": "Peter Adison",
   "repository": {
@@ -46,6 +46,7 @@
   },
   "overrides": {
     "@tootallnate/once": "3.0.1",
+    "picomatch": "4.0.4",
     "tar": "7.5.12"
   },
   "sideEffects": false,
