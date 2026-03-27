@@ -39,9 +39,9 @@ Set all composition to `false`, keep `min: 8`.
 
 | # | Password | Component | Expected |
 |---|----------|-----------|----------|
-| 13 | `abdghduks` | Strength (contextual & full) | "→ Try adding uppercase letters, numbers, and special characters" |
+| 13 | `abdghduks` | Strength (contextual & full) | "→ Try adding uppercase letters or numbers" |
 | 14 | `abdghduks` | Analysis (contextual & full) | same as above |
-| 15 | `abdghdukS` | Strength (contextual & full) | "→ Try adding numbers and special characters" |
+| 15 | `abdghdukS` | Strength (contextual & full) | "→ Try adding numbers or special characters" |
 | 16 | `abdghdukS` | Analysis (contextual & full) | same as above |
 | 17 | `@bdghdukS` | Strength (contextual & full) | "→ Try adding numbers" |
 | 18 | `@bdghdukS` | Analysis (contextual & full) | same as above |

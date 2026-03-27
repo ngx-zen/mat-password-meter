@@ -84,8 +84,7 @@ export function resolveDisabledOptionsNudge(
   const keys = getMissingDisabledKeys(password, opts);
   if (keys.length === 0) return null;
   if (customFn) return customFn(keys) || null;
-  const items = keys.slice(0, 3).map(k => DISABLED_KEY_LABELS[k]);
+  const items = keys.slice(0, 2).map(k => DISABLED_KEY_LABELS[k]);
   if (items.length === 1) return `Try adding ${items[0]}`;
-  if (items.length === 2) return `Try adding ${items[0]} and ${items[1]}`;
-  return `Try adding ${items[0]}, ${items[1]}, and ${items[2]}`;
+  return `Try adding ${items[0]} or ${items[1]}`;
 }

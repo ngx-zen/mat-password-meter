@@ -191,21 +191,21 @@ describe('rules.utils', () => {
       );
     });
 
-    it('should combine two missing classes with "and"', () => {
+    it('should combine two missing classes with "or"', () => {
       const opts = { ...allEnabled, uppercase: false, number: false };
       expect(resolveDisabledOptionsNudge('abc', opts, undefined)).toBe(
-        'Try adding uppercase letters and numbers',
+        'Try adding uppercase letters or numbers',
       );
     });
 
-    it('should combine three missing classes with commas and "and"', () => {
+    it('should cap at 2 items when three classes are missing', () => {
       const opts = { ...allEnabled, uppercase: false, number: false, specialChar: false };
       expect(resolveDisabledOptionsNudge('abc', opts, undefined)).toBe(
-        'Try adding uppercase letters, numbers, and special characters',
+        'Try adding uppercase letters or numbers',
       );
     });
 
-    it('should cap at 3 items when all 4 composition classes are disabled', () => {
+    it('should cap at 2 items when all 4 composition classes are disabled', () => {
       const opts = {
         ...allEnabled,
         lowercase: false,
@@ -214,10 +214,7 @@ describe('rules.utils', () => {
         specialChar: false,
       };
       const result = resolveDisabledOptionsNudge('12345678', opts, undefined);
-      // password has numbers, so only lowercase, uppercase, specialChar are missing → 3 items
-      expect(result).toBe(
-        'Try adding lowercase letters, uppercase letters, and special characters',
-      );
+      expect(result).toBe('Try adding lowercase letters or uppercase letters');
     });
 
     it('should return null when no composition options are disabled', () => {

@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Requires Angular 20** (`^20.0.0`) and Angular Material 20 (`^20.0.0`)
 
+## [1.5.1] — 2026-03-27
+
+### Changed
+
+- **Disabled-options nudge** — capped at 2 suggestions (was 3) and now uses "or" instead of "and" to better reflect that adding any one of the listed character types will improve entropy (relevant in NIST-aligned configurations with composition rules disabled)
+
 ## [1.5.0] — 2026-03-26
 
 ### Added

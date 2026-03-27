@@ -30,6 +30,7 @@
     "typescript": "~5.8.3"
   },
   "overrides": {
+    "node-forge": "1.4.0",
     "picomatch": "4.0.4"
   }
 }
