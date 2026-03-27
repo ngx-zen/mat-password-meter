@@ -127,7 +127,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CSS custom properties** — `--pm-weak-color`, `--pm-medium-color`, `--pm-strong-color`, `--pm-buffer-color`
 - Live demo: [ngx-zen.github.io/mat-password-meter](https://ngx-zen.github.io/mat-password-meter/)
 
-[2.0.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.5.0...v2.0.0
+[2.0.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.5.1...v2.0.0
+[1.5.1]: https://github.com/ngx-zen/mat-password-meter/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ngx-zen/mat-password-meter/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/ngx-zen/mat-password-meter/compare/v1.3.0...v1.3.1
