@@ -1,6 +1,6 @@
 {
   "name": "@ngx-zen/mat-password-meter",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "An Angular Material password strength indicator",
   "author": "Peter Adison",
   "license": "MIT",
