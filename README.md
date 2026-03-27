@@ -22,7 +22,7 @@ Three Angular Material password strength components with a signals-based API. **
 - Signals-based API — reactive `input()`, `output()`, and `computed()` throughout
 - Three feedback modes: `'contextual'` hint, `'full'` panel, or `'hidden'`
 - Extensible with app-specific rules via `customRules` — e.g. "must not contain username"
-- Fully customizable display strings via `messages` — localize labels, hints, and nudges
+- Fully customizable display strings via `messages` — tailor labels, hints, and nudges to your brand or UX
 - [zxcvbn](https://github.com/dropbox/zxcvbn) lazy-loaded — no bundle cost when using only `PasswordRulesComponent`
 - Fully themeable via CSS custom properties; adapts to light/dark themes automatically
 
@@ -130,23 +130,15 @@ All properties optional; omitted keys fall back to defaults. For string keys, pa
 | `strengthLabels` | `PasswordStrengthLabels` | `{}` | Override the strength level labels below the bar |
 | `ruleLabels` | `PasswordRuleLabels` | `{}` | Override the per-rule checklist labels. Not used by `PasswordAnalysisComponent`. |
 
-**Example** — overriding display strings for Filipino localization:
+**Example** — customizing display strings to match your app's tone:
 ```ts
-// Custom labels for the disabled-options nudge
-private static readonly MY_LABELS: Record<DisabledOptionKey, string> = {
-  lowercase: 'maliliit na titik',
-  uppercase: 'malalaking titik',
-  number: 'mga numero',
-  specialChar: 'mga espesyal na karakter',
-};
-
 readonly messages: PasswordMeterMessages = {
-  looksGreat: 'Perpekto!',
-  nudge: '',
+  looksGreat: 'Excellent!',
+  nudge: 'Try making it harder to guess.',
   // Replace the default "Try adding …" nudge, or return '' to suppress
-  disabledNudge: (keys) => 'Subukang magdagdag ng ' + keys.map(k => MyComponent.MY_LABELS[k]).join(' at '),
-  strengthLabels: { veryWeak: 'Napakahina', veryStrong: 'Napakalakas' },
-  ruleLabels: { minLength: (n) => `Kailangan ng ${n} titik` },
+  disabledNudge: (keys) => `Consider adding ${keys.join(' or ')} for extra security.`,
+  strengthLabels: { veryWeak: 'Too simple', veryStrong: 'Excellent' },
+  ruleLabels: { minLength: (n) => `Use at least ${n} characters` },
 };
 ```
 ```html
@@ -177,8 +169,6 @@ readonly messages: PasswordMeterMessages = {
 | `uppercase` | `'At least 1 uppercase letter'` |
 | `number` | `'At least 1 number'` |
 | `specialChar` | `'At least 1 special character'` |
-
-> **Need translated zxcvbn feedback strings?** The `warning` and `suggestions` shown by `PasswordAnalysisComponent` and `PasswordStrengthComponent` come directly from zxcvbn and are always English. [Open an issue](https://github.com/ngx-zen/mat-password-meter/issues) if you need `@zxcvbn-ts` support.
 
 </details>
 

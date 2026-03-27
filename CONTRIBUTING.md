@@ -4,39 +4,23 @@
 
 ```
 src/
-  ng-package.json          # ng-packagr config — primary entry point
-  public-api.ts            # Exports shared utilities and types only
-  package.json             # Published package.json (name: mat-password-meter)
-  shared/
-    types.ts               # PasswordRuleOptions, PasswordRuleCheck, ZxcvbnResult, ZxcvbnScore, ZxcvbnFn, PasswordMeterMessages
-    rules.utils.ts         # evaluateRules(), scoreFromChecks()
-    meter.utils.ts         # scoreToColor(), scoreToLabel(), ZXCVBN_SCORE_MAP
-    meter.styles.ts        # METER_STYLES shared CSS constant
-  rules/
-    ng-package.json        # Secondary entry: mat-password-meter/rules
-    index.ts
-    lib/
-      password-rules.component.ts
-      password-rules.component.html
-      password-rules.component.spec.ts
-  analysis/
-    ng-package.json        # Secondary entry: mat-password-meter/analysis
-    index.ts
-    lib/
-      password-analysis.component.ts
-      password-analysis.component.html
-      password-analysis.component.spec.ts
-  strength/
-    ng-package.json        # Secondary entry: mat-password-meter/strength
-    index.ts
-    lib/
-      password-strength.component.ts
-      password-strength.component.html
-      password-strength.component.spec.ts
-demo/                      # demonstration app
+  ng-package.json
+  public-api.ts
+  package.json
+  shared/                  # Utilities, types, styles
+  rules/                   # PasswordRuleComponent
+  analysis/                # PasswordAnalysisComponent
+  strength/                # PasswordStrengthComponent
+demo/
 scripts/
-  pack.mjs                 # Post-pack rename script
 ```
+
+Each feature module contains:
+- `index.ts` — public API
+- `lib/` — component implementation (`.ts`, `.html`, `.spec.ts`)
+- `ng-package.json` — entry point config
+
+The `shared/` folder has reusable utilities and types.
 
 ## Setup
 
