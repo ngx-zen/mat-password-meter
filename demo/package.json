@@ -31,8 +31,6 @@
   },
   "overrides": {
     "node-forge": "1.4.0",
-    "picomatch": "4.0.4",
-    "serialize-javascript": "7.0.4",
-    "tar": "7.5.11"
+    "picomatch": "4.0.4"
   }
 }
