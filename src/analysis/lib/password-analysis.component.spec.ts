@@ -217,7 +217,7 @@ describe('PasswordAnalysisComponent', () => {
           const hint = fixture.debugElement.query(By.css('.password-meter-hint'));
           expect(hint).toBeTruthy();
           expect(hint.nativeElement.textContent).toContain(
-            'Try adding uppercase letters, numbers, and special characters',
+            'Try adding uppercase letters or numbers',
           );
           expect(fixture.debugElement.query(By.css('.password-meter-nudge'))).toBeNull();
         }));

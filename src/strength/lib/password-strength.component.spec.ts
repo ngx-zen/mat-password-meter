@@ -580,7 +580,7 @@ describe('PasswordStrengthComponent', () => {
         fixture.detectChanges();
         expect(component.mergedHint()?.type).toBe('suggestion');
         expect(fixture.nativeElement.textContent).toContain(
-          'Try adding uppercase letters, numbers, and special characters',
+          'Try adding uppercase letters or numbers',
         );
       }));
 
