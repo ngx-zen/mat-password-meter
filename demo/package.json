@@ -28,9 +28,5 @@
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
     "typescript": "~5.8.3"
-  },
-  "overrides": {
-    "node-forge": "1.4.0",
-    "picomatch": "4.0.4"
   }
 }
