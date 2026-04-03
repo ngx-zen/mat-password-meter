@@ -1,4 +1,4 @@
-﻿import { ComponentRef } from '@angular/core';
+import { ComponentRef } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { PasswordStrengthComponent } from './password-strength.component';
