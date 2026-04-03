@@ -2,9 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "types": ["jest", "node"],
+    "skipLibCheck": true,
     "paths": {
       "@ngx-zen/mat-password-meter": ["./src/public-api.ts"]
     }
