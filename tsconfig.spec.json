@@ -1,12 +1,13 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "types": ["jest", "node"],
     "paths": {
-      "@ngx-zen/mat-password-meter": ["./src/public-api.ts"]
+      "@ngx-zen/mat-password-meter": ["./src/public-api.ts"],
+      "@angular/core/testing": ["./node_modules/@angular/core/types/testing.d.ts"],
+      "@angular/material/progress-bar": ["./node_modules/@angular/material/types/progress-bar.d.ts"]
     }
   },
   "include": ["src/**/*.spec.ts", "setup-jest.ts"]
