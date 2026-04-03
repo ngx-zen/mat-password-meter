@@ -45,14 +45,6 @@
     "zone.js": "^0.15.1",
     "zxcvbn": "^4.4.2"
   },
-  "overrides": {
-    "brace-expansion": "5.0.5",
-    "handlebars": "4.7.9",
-    "node-forge": "1.4.0",
-    "path-to-regexp": "8.4.1",
-    "picomatch": "4.0.4",
-    "serialize-javascript": "7.0.5"
-  },
   "sideEffects": false,
   "lint-staged": {
     "src/**/*.{ts,html,scss,json}": "prettier --check",
