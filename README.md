@@ -4,6 +4,7 @@
 [![CI](https://github.com/ngx-zen/mat-password-meter/actions/workflows/ci.yml/badge.svg)](https://github.com/ngx-zen/mat-password-meter/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ngx-zen/mat-password-meter/branch/main/graph/badge.svg)](https://codecov.io/gh/ngx-zen/mat-password-meter)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ngx-zen/mat-password-meter/badge.svg)](https://snyk.io/test/npm/@ngx-zen/mat-password-meter)
+[![bundle size](https://badgen.net/bundlephobia/minzip/@ngx-zen/mat-password-meter)](https://bundlephobia.com/package/@ngx-zen/mat-password-meter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Three Angular Material password strength components with a signals-based API. **[Live Demo →](https://ngx-zen.github.io/mat-password-meter/)**
@@ -30,6 +31,7 @@ Three Angular Material password strength components with a signals-based API. **
 
 | Library | Angular | Angular Material | zxcvbn |
 |---------|---------|------------------|--------|
+| `3.x` | `^21` | `^21` | `^4.4.2` |
 | `2.x` | `^20` | `^20` | `^4.4.2` |
 | `1.x` | `^19` | `^19` | `^4.4.2` |
 
