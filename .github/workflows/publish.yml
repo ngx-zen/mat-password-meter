@@ -6,10 +6,10 @@ on:
       tag:
         description: 'npm dist-tag (latest=current, v1-lts=angular19, v2-lts=angular20, v3-lts=angular21)'
         required: false
-        default: 'latest'
+        default: 'v3-lts'
         type: choice
         options:
-          - latest
+          - v3-lts
 
 permissions:
   id-token: write # Required for OIDC

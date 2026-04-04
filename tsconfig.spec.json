@@ -4,6 +4,7 @@
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "types": ["jest", "node"],
+    "skipLibCheck": true,
     "paths": {
       "@ngx-zen/mat-password-meter": ["./src/public-api.ts"],
       "@angular/core/testing": ["./node_modules/@angular/core/types/testing.d.ts"],
