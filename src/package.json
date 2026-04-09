@@ -1,7 +1,7 @@
 {
   "name": "@ngx-zen/mat-password-meter",
   "version": "3.0.0",
-  "description": "An Angular Material password strength indicator",
+  "description": "Angular Password Strength Meter (zxcvbn, NIST-aligned, customizable)",
   "author": "Peter Adison",
   "license": "MIT",
   "keywords": [
@@ -14,8 +14,12 @@
     "password analysis",
     "password rules",
     "password policy",
+    "password entropy",
     "component",
-    "zxcvbn"
+    "nist-aligned",
+    "security",
+    "zxcvbn",
+    "customizable"
   ],
   "repository": {
     "type": "git",
