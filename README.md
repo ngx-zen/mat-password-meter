@@ -1,11 +1,10 @@
 # @ngx-zen/mat-password-meter
 
 [![npm](https://img.shields.io/npm/v/@ngx-zen/mat-password-meter?color=crimson&logo=npm)](https://www.npmjs.com/package/@ngx-zen/mat-password-meter)
-[![Angular](https://img.shields.io/badge/Angular-19+-blue?logo=angular)](https://angular.io)
 [![CI](https://github.com/ngx-zen/mat-password-meter/actions/workflows/ci.yml/badge.svg)](https://github.com/ngx-zen/mat-password-meter/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ngx-zen/mat-password-meter/branch/main/graph/badge.svg)](https://codecov.io/gh/ngx-zen/mat-password-meter)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@ngx-zen/mat-password-meter/badge.svg)](https://snyk.io/test/npm/@ngx-zen/mat-password-meter)
-[![bundle size](https://badgen.net/bundlephobia/minzip/@ngx-zen/mat-password-meter?color=gray)](https://bundlephobia.com/package/@ngx-zen/mat-password-meter)
+[![bundle size](https://badgen.net/bundlephobia/minzip/@ngx-zen/mat-password-meter)](https://bundlephobia.com/package/@ngx-zen/mat-password-meter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Three Angular Material password strength components with a signals-based API. **[Live Demo →](https://ngx-zen.github.io/mat-password-meter/)**
