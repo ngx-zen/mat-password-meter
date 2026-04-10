@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Internal changes (documentation, CI, and test configuration improvements)
+- Internal changes (documentation, CI, and test configuration)
+- Demo: updated favicon
 
 ## [3.0.0] — 2026-04-03
 
