@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] — 2026-04-11
+
+### Changed
+
+- Internal changes (documentation, CI, and test configuration improvements)
+
 ## [3.0.0] — 2026-04-03
 
 ### Breaking Changes
@@ -141,6 +147,7 @@ Unpublished from npm; version number permanently unavailable.
 - **CSS custom properties** — `--pm-weak-color`, `--pm-medium-color`, `--pm-strong-color`, `--pm-buffer-color`
 - Live demo: [ngx-zen.github.io/mat-password-meter](https://ngx-zen.github.io/mat-password-meter/)
 
+[3.0.1]: https://github.com/ngx-zen/mat-password-meter/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/ngx-zen/mat-password-meter/compare/v2.0.2...v3.0.0
 [2.0.2]: https://github.com/ngx-zen/mat-password-meter/compare/v1.5.1...v2.0.2
 [1.5.1]: https://github.com/ngx-zen/mat-password-meter/compare/v1.5.0...v1.5.1
