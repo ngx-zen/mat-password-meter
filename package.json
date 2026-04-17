@@ -41,7 +41,7 @@
     "lint-staged": "^16.4.0",
     "ng-packagr": "^20.3.2",
     "prettier": "^3.8.2",
-    "typescript": "~5.8.3",
+    "typescript": "~6.0.3",
     "zone.js": "^0.15.1",
     "zxcvbn": "^4.4.2"
   },
