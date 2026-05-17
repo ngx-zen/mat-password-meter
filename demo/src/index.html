@@ -15,10 +15,13 @@
     />
     <meta name="author" content="Peter Adison" />
     <meta name="robots" content="index, follow" />
+    <meta name="application-name" content="@ngx-zen/mat-password-meter" />
+    <meta name="apple-mobile-web-app-title" content="Mat Password Meter" />
     <meta name="theme-color" content="#3f51b5" />
     <link rel="canonical" href="https://ngx-zen.github.io/mat-password-meter/" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:site_name" content="@ngx-zen/mat-password-meter" />
     <meta property="og:title" content="Angular Password Strength Meter" />
     <meta
@@ -27,6 +30,9 @@
     />
     <meta property="og:url" content="https://ngx-zen.github.io/mat-password-meter/" />
     <meta property="og:image" content="https://ngx-zen.github.io/mat-password-meter/favicon.png" />
+    <meta property="og:image:alt" content="@ngx-zen/mat-password-meter logo" />
+    <meta property="og:image:width" content="1254" />
+    <meta property="og:image:height" content="1254" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Angular Password Strength Meter" />
     <meta
@@ -34,20 +40,34 @@
       content="Try @ngx-zen/mat-password-meter, an Angular Material password strength meter for modern Angular apps."
     />
     <meta name="twitter:image" content="https://ngx-zen.github.io/mat-password-meter/favicon.png" />
+    <meta name="twitter:image:alt" content="@ngx-zen/mat-password-meter logo" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareSourceCode",
+        "@type": ["SoftwareSourceCode", "SoftwareApplication"],
         "name": "@ngx-zen/mat-password-meter",
+        "alternateName": "Angular Password Strength Meter",
         "description": "Angular Material password strength meter with zxcvbn analysis, policy rules, custom validators, and NIST-aligned feedback.",
         "codeRepository": "https://github.com/ngx-zen/mat-password-meter",
         "license": "https://opensource.org/licenses/MIT",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web",
         "programmingLanguage": "TypeScript",
         "runtimePlatform": "Angular",
         "url": "https://ngx-zen.github.io/mat-password-meter/",
+        "downloadUrl": "https://www.npmjs.com/package/@ngx-zen/mat-password-meter",
+        "sameAs": [
+          "https://github.com/ngx-zen/mat-password-meter",
+          "https://www.npmjs.com/package/@ngx-zen/mat-password-meter"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
         "author": {
           "@type": "Person",
           "name": "Peter Adison",
@@ -57,6 +77,27 @@
     </script>
   </head>
   <body class="mat-typography">
-    <app-root></app-root>
+    <app-root>
+      <main>
+        <h1>Angular Password Strength Meter</h1>
+        <p>
+          @ngx-zen/mat-password-meter provides Angular Material password strength components with zxcvbn analysis,
+          policy rules, custom validators, and NIST-aligned feedback.
+        </p>
+        <p>
+          <a href="https://github.com/ngx-zen/mat-password-meter">View the source on GitHub</a>
+          or
+          <a href="https://www.npmjs.com/package/@ngx-zen/mat-password-meter">install the package from npm</a>
+          .
+        </p>
+      </main>
+    </app-root>
+    <noscript>
+      Enable JavaScript to use the interactive password strength demo. The Angular package is available on
+      <a href="https://www.npmjs.com/package/@ngx-zen/mat-password-meter">npm</a>
+      and
+      <a href="https://github.com/ngx-zen/mat-password-meter">GitHub</a>
+      .
+    </noscript>
   </body>
 </html>
