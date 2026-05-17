@@ -1,4 +1,4 @@
-<div class="demo-wrapper">
+<main class="demo-wrapper">
   <div class="demo-header">
     <h1>Password Meter Demo</h1>
     <button mat-icon-button (click)="toggleDarkMode()" [attr.aria-label]="'Toggle dark mode'">
@@ -122,7 +122,12 @@
               <span class="option-label"><code>min</code></span>
               <div class="slider-row">
                 <mat-slider min="0" max="30" step="1" discrete>
-                  <input matSliderThumb [value]="minLength()" (valueChange)="minLength.set($event)" />
+                  <input
+                    matSliderThumb
+                    aria-label="Minimum password length"
+                    [value]="minLength()"
+                    (valueChange)="minLength.set($event)"
+                  />
                 </mat-slider>
                 <span class="slider-value">{{ minLength() }}</span>
               </div>
@@ -198,4 +203,4 @@
       Like what you see? Leave a ⭐
     </a>
   </footer>
-</div>
+</main>
